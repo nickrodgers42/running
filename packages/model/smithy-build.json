@@ -1,0 +1,28 @@
+{
+    "version": "1.0",
+    "projections": {
+        "client": {
+            "plugins": {
+                "typescript-codegen": {
+                    "package": "@running/client",
+                    "packageVersion": "0.0.1"
+                }
+            }
+        },
+        "server": {
+            "plugins": {
+                "typescript-ssdk-codegen": {
+                    "package": "@running/server",
+                    "packageVersion": "0.0.1"
+                }
+            }
+        }
+    },
+    "plugins": {
+        "openapi": {
+            "service": "example.running#Running",
+            "protocol": "aws.protocols#restJson1"
+        }
+    }
+}
+

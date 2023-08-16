@@ -1,0 +1,23 @@
+{
+  "name": "server",
+  "packageManager": "yarn@3.6.1",
+  "scripts": {
+    "start": "yarn ts-node src/index.ts"
+  },
+  "devDependencies": {
+    "@aws-sdk/protocol-http": "^3.310.0",
+    "@aws-smithy/server-common": "^1.0.0-alpha.9",
+    "@running/server": "workspace:^",
+    "@types/jest": "^29.5.1",
+    "@types/node": "^18.15.11",
+    "@types/pg": "^8.6.6",
+    "axios": "^1.4.0",
+    "dotenv": "^16.0.3",
+    "jest": "^29.5.0",
+    "nodemon": "^2.0.22",
+    "pg": "^8.10.0",
+    "ts-jest": "^29.1.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.4"
+  }
+}
