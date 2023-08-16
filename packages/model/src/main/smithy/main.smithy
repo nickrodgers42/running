@@ -19,7 +19,6 @@ service Running {
     ]
 }
 
-@readonly
 @http(method: "POST", "uri": "/exchangeToken", code: 200)
 operation ExchangeToken {
     input: ExchangeTokenInput
@@ -54,9 +53,6 @@ structure ExchangeTokenOutput {
 structure Athlete {
     @required
     id: Integer
-
-    @required
-    username: String
 }
 
 @error("server")
