@@ -7,7 +7,6 @@ import {
   RouterProvider,
   createBrowserRouter
 } from 'react-router-dom'
-import { CLIENT_ID } from './constants';
 
 import {
     ExchangeTokenCommand,
@@ -25,17 +24,19 @@ const router = createBrowserRouter([
     element: app,
     children: [
       {
-        path: "exchange_token",
+        path: "exchangeToken",
         element: app,
         loader: async ({ request }) => {
           const url = new URL(request.url)
-          const exchangeToken = url.searchParams.get('code')
+          if (!url.searchParams.has('code')) {
+            throw Error("No exchange token provided")
+          }
+          const exchangeToken = url.searchParams.get('code')!
           console.log('exchangeToken is ' + exchangeToken)
 
           const response = await runningClient.send(new ExchangeTokenCommand({
-            exchangeToken: exchangeToken || "h"
+            exchangeToken: exchangeToken
           }))
-          console.log(response)
           return new Response(JSON.stringify({ exchange_token: exchangeToken}), {
             status: 200,
             headers: {
