@@ -54,6 +54,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageLocation": "./",\
           "packageDependencies": [\
             ["@types/node", "npm:20.4.10"],\
+            ["concurrently", "npm:8.2.0"],\
             ["ts-node", "virtual:1c60d2e2c26501d017f91dcad65dfb99d6a5f9abf2f5a09ac344b1e9f220bf772a82290d942784ca5dc48dc91fa8cd2e98709e68029109f298d405430cee74cc#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -8265,6 +8266,22 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["yargs", "npm:16.2.0"]\
           ],\
           "linkType": "HARD"\
+        }],\
+        ["npm:8.2.0", {\
+          "packageLocation": "./.yarn/cache/concurrently-npm-8.2.0-be774a222e-eafe6a4d9b.zip/node_modules/concurrently/",\
+          "packageDependencies": [\
+            ["concurrently", "npm:8.2.0"],\
+            ["chalk", "npm:4.1.2"],\
+            ["date-fns", "npm:2.30.0"],\
+            ["lodash", "npm:4.17.21"],\
+            ["rxjs", "npm:7.8.1"],\
+            ["shell-quote", "npm:1.8.1"],\
+            ["spawn-command", "npm:0.0.2"],\
+            ["supports-color", "npm:8.1.1"],\
+            ["tree-kill", "npm:1.2.2"],\
+            ["yargs", "npm:17.7.2"]\
+          ],\
+          "linkType": "HARD"\
         }]\
       ]],\
       ["confusing-browser-globals", [\
@@ -8911,13 +8928,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:2a426afc4b2eef43db12a540d29c2b5476640459bfcd5c24f86bb401cf8cce97e63bd81794d206a5643057e7f662643afd5ce3dfc4d4bfd8e706006c6309c5fa#npm:3.2.7", {\
-          "packageLocation": "./.yarn/__virtual__/debug-virtual-d2345003b7/0/cache/debug-npm-3.2.7-754e818c7a-b3d8c59407.zip/node_modules/debug/",\
+        ["virtual:07d6d759b1359dbe6312f6d0dbe0e579a03f96a7488074a1978eb0a39cddda092115963230672b3a644e0eb5bf2e6bb872260fd7461deb0a18969606250d726f#npm:3.2.7", {\
+          "packageLocation": "./.yarn/__virtual__/debug-virtual-397285b962/0/cache/debug-npm-3.2.7-754e818c7a-b3d8c59407.zip/node_modules/debug/",\
           "packageDependencies": [\
-            ["debug", "virtual:2a426afc4b2eef43db12a540d29c2b5476640459bfcd5c24f86bb401cf8cce97e63bd81794d206a5643057e7f662643afd5ce3dfc4d4bfd8e706006c6309c5fa#npm:3.2.7"],\
+            ["debug", "virtual:07d6d759b1359dbe6312f6d0dbe0e579a03f96a7488074a1978eb0a39cddda092115963230672b3a644e0eb5bf2e6bb872260fd7461deb0a18969606250d726f#npm:3.2.7"],\
             ["@types/supports-color", null],\
             ["ms", "npm:2.1.3"],\
-            ["supports-color", null]\
+            ["supports-color", "npm:5.5.0"]\
           ],\
           "packagePeers": [\
             "@types/supports-color",\
@@ -8925,13 +8942,13 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           ],\
           "linkType": "HARD"\
         }],\
-        ["virtual:2e71ccda0bb8e9b150eba16d9555040ae3f5a03be41bbaba1c15a7310399806e2c8e36c9e19d1b8015c6bb7294dccf844594ece9e99a12b6d5722662eca0b9b2#npm:3.2.7", {\
-          "packageLocation": "./.yarn/__virtual__/debug-virtual-40e471c348/0/cache/debug-npm-3.2.7-754e818c7a-b3d8c59407.zip/node_modules/debug/",\
+        ["virtual:2a426afc4b2eef43db12a540d29c2b5476640459bfcd5c24f86bb401cf8cce97e63bd81794d206a5643057e7f662643afd5ce3dfc4d4bfd8e706006c6309c5fa#npm:3.2.7", {\
+          "packageLocation": "./.yarn/__virtual__/debug-virtual-d2345003b7/0/cache/debug-npm-3.2.7-754e818c7a-b3d8c59407.zip/node_modules/debug/",\
           "packageDependencies": [\
-            ["debug", "virtual:2e71ccda0bb8e9b150eba16d9555040ae3f5a03be41bbaba1c15a7310399806e2c8e36c9e19d1b8015c6bb7294dccf844594ece9e99a12b6d5722662eca0b9b2#npm:3.2.7"],\
+            ["debug", "virtual:2a426afc4b2eef43db12a540d29c2b5476640459bfcd5c24f86bb401cf8cce97e63bd81794d206a5643057e7f662643afd5ce3dfc4d4bfd8e706006c6309c5fa#npm:3.2.7"],\
             ["@types/supports-color", null],\
             ["ms", "npm:2.1.3"],\
-            ["supports-color", "npm:5.5.0"]\
+            ["supports-color", null]\
           ],\
           "packagePeers": [\
             "@types/supports-color",\
@@ -14246,17 +14263,17 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["nodemon", [\
-        ["npm:2.0.22", {\
-          "packageLocation": "./.yarn/unplugged/nodemon-npm-2.0.22-2e71ccda0b/node_modules/nodemon/",\
+        ["npm:3.0.1", {\
+          "packageLocation": "./.yarn/unplugged/nodemon-npm-3.0.1-07d6d759b1/node_modules/nodemon/",\
           "packageDependencies": [\
-            ["nodemon", "npm:2.0.22"],\
+            ["nodemon", "npm:3.0.1"],\
             ["chokidar", "npm:3.5.3"],\
-            ["debug", "virtual:2e71ccda0bb8e9b150eba16d9555040ae3f5a03be41bbaba1c15a7310399806e2c8e36c9e19d1b8015c6bb7294dccf844594ece9e99a12b6d5722662eca0b9b2#npm:3.2.7"],\
+            ["debug", "virtual:07d6d759b1359dbe6312f6d0dbe0e579a03f96a7488074a1978eb0a39cddda092115963230672b3a644e0eb5bf2e6bb872260fd7461deb0a18969606250d726f#npm:3.2.7"],\
             ["ignore-by-default", "npm:1.0.1"],\
             ["minimatch", "npm:3.1.2"],\
             ["pstree.remy", "npm:1.1.8"],\
-            ["semver", "npm:5.7.2"],\
-            ["simple-update-notifier", "npm:1.1.0"],\
+            ["semver", "npm:7.5.4"],\
+            ["simple-update-notifier", "npm:2.0.0"],\
             ["supports-color", "npm:5.5.0"],\
             ["touch", "npm:3.1.0"],\
             ["undefsafe", "npm:2.0.5"]\
@@ -17686,6 +17703,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["running", "workspace:."],\
             ["@types/node", "npm:20.4.10"],\
+            ["concurrently", "npm:8.2.0"],\
             ["ts-node", "virtual:1c60d2e2c26501d017f91dcad65dfb99d6a5f9abf2f5a09ac344b1e9f220bf772a82290d942784ca5dc48dc91fa8cd2e98709e68029109f298d405430cee74cc#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -17698,6 +17716,14 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["rxjs", "npm:6.6.7"],\
             ["tslib", "npm:1.14.1"]\
+          ],\
+          "linkType": "HARD"\
+        }],\
+        ["npm:7.8.1", {\
+          "packageLocation": "./.yarn/cache/rxjs-npm-7.8.1-41c443a75b-de4b53db10.zip/node_modules/rxjs/",\
+          "packageDependencies": [\
+            ["rxjs", "npm:7.8.1"],\
+            ["tslib", "npm:2.6.1"]\
           ],\
           "linkType": "HARD"\
         }]\
@@ -17893,24 +17919,10 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["semver", [\
-        ["npm:5.7.2", {\
-          "packageLocation": "./.yarn/cache/semver-npm-5.7.2-938ee91eaa-fb4ab5e0dd.zip/node_modules/semver/",\
-          "packageDependencies": [\
-            ["semver", "npm:5.7.2"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
         ["npm:6.3.1", {\
           "packageLocation": "./.yarn/cache/semver-npm-6.3.1-bcba31fdbe-ae47d06de2.zip/node_modules/semver/",\
           "packageDependencies": [\
             ["semver", "npm:6.3.1"]\
-          ],\
-          "linkType": "HARD"\
-        }],\
-        ["npm:7.0.0", {\
-          "packageLocation": "./.yarn/cache/semver-npm-7.0.0-218e8c00ca-272c11bf8d.zip/node_modules/semver/",\
-          "packageDependencies": [\
-            ["semver", "npm:7.0.0"]\
           ],\
           "linkType": "HARD"\
         }],\
@@ -18006,7 +18018,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["axios", "npm:1.4.0"],\
             ["dotenv", "npm:16.3.1"],\
             ["jest", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:29.6.2"],\
-            ["nodemon", "npm:2.0.22"],\
+            ["nodemon", "npm:3.0.1"],\
             ["pg", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:8.11.2"],\
             ["ts-jest", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:29.1.1"],\
             ["ts-node", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:10.9.1"],\
@@ -18109,11 +18121,11 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
         }]\
       ]],\
       ["simple-update-notifier", [\
-        ["npm:1.1.0", {\
-          "packageLocation": "./.yarn/cache/simple-update-notifier-npm-1.1.0-92878518a3-1012e9b6c5.zip/node_modules/simple-update-notifier/",\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/simple-update-notifier-npm-2.0.0-4d6e5dba61-9ba00d38ce.zip/node_modules/simple-update-notifier/",\
           "packageDependencies": [\
-            ["simple-update-notifier", "npm:1.1.0"],\
-            ["semver", "npm:7.0.0"]\
+            ["simple-update-notifier", "npm:2.0.0"],\
+            ["semver", "npm:7.5.4"]\
           ],\
           "linkType": "HARD"\
         }]\

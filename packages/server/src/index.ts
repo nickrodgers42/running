@@ -1,9 +1,9 @@
 import { HttpRequest, HttpResponse } from "@aws-sdk/protocol-http"
 import * as dotenv from "dotenv"
 import http, { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http"
-import { ExchangeTokenInput, ExchangeTokenOutput, getRunningServiceHandler } from "@running/server"
+import { ExchangeTokenError, ExchangeTokenInput, ExchangeTokenOutput, getRunningServiceHandler } from "@running/server"
 import { Operation } from "@aws-smithy/server-common"
-import axios from 'axios'
+import axios, { AxiosError, AxiosResponse } from 'axios'
 
 dotenv.config()
 const PORT = 8080
@@ -15,20 +15,27 @@ const ExchangeTokenOperation: Operation<
     ExchangeTokenOutput,
     ExchangeTokenContext
 > = async (input: ExchangeTokenInput, context: any) => {
-    console.log("exchange token")
-    const response = await axios.post(`https://www.strava.com/oauth/token`, {
-            client_id: 103299,
-            client_secret: "",
-            code: input.exchangeToken,
-            grant_type: "authorization_code"
-        },
-        {
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        })
-    console.log(response.data)
+    let response: AxiosResponse;
+    try {
+        response = await axios.post(`https://www.strava.com/oauth/token`, {
+                client_id: 103299,
+                client_secret: "",
+                code: input.exchangeToken,
+                grant_type: "authorization_code"
+            },
+            {
+                headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                }
+            })
+    } catch(error) {
+        if (error instanceof AxiosError) {
+            console.log("Couldn't exchange token")
+            console.log(error.message)
+        }
+        throw new ExchangeTokenError({ message: "Unable to exchange token for accessToken" })
+    }
     return {
         accessToken: response.data.access_token,
         refreshToken: response.data.refresh_token,
@@ -99,15 +106,30 @@ const server = http
                 body: body === "" ? undefined : Buffer.from(body),
                 query: convertQueryParams(url.searchParams) as any,
             })
+
             const httpResponse: HttpResponse =
                 await runningServiceHander.handle(httpRequest, {})
+
             httpResponse.headers['Access-Control-Allow-Origin'] = '*'
+            httpResponse.headers["Access-Control-Allow-Headers"] =  "*"
+
+            if (req.method !== "OPTIONS") {
+                res.statusCode = httpResponse.statusCode
+            }
+            for (const key in httpResponse.headers) {
+                if (Array.isArray(httpResponse.headers[key])) {
+                    res.setHeader(key, httpResponse.headers[key].toString())
+                }
+                else {
+                    res.setHeader(key, httpResponse.headers[key])
+                }
+            }
             console.log(httpResponse)
-            httpResponse
-            res.setHeader("Access-Control-Allow-Origin", "*")
-            res.setHeader("Access-Control-Allow-Headers", "*")
+            console.log(res.getHeaders())
+            console.log(res.statusCode)
             res.end(httpResponse.body)
         })
+
     })
     .listen(PORT)
 

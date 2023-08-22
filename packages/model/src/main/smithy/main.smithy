@@ -56,6 +56,7 @@ structure Athlete {
 }
 
 @error("server")
+@httpError(500)
 structure ExchangeTokenError {
     @required
     message: String
