@@ -4,8 +4,9 @@ import http, { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http
 import { ExchangeTokenError, ExchangeTokenInput, ExchangeTokenOutput, getRunningServiceHandler } from "@running/server"
 import { Operation } from "@aws-smithy/server-common"
 import axios, { AxiosError, AxiosResponse } from 'axios'
+import workspacesRoot from "find-yarn-workspace-root"
 
-dotenv.config()
+dotenv.config({ path: `${workspacesRoot()}/.env` })
 const PORT = 8080
 
 export interface ExchangeTokenContext { }
@@ -18,8 +19,8 @@ const ExchangeTokenOperation: Operation<
     let response: AxiosResponse;
     try {
         response = await axios.post(`https://www.strava.com/oauth/token`, {
-                client_id: 103299,
-                client_secret: "",
+                client_id: process.env.CLIENT_ID,
+                client_secret: process.env.CLIENT_SECRET,
                 code: input.exchangeToken,
                 grant_type: "authorization_code"
             },
@@ -48,23 +49,6 @@ const ExchangeTokenOperation: Operation<
 const runningServiceHander = getRunningServiceHandler({
     ExchangeToken: ExchangeTokenOperation
 })
-
-const convertHeaders = (
-    headers: IncomingHttpHeaders
-): Record<string, string> => {
-    const convertedHeaders: Record<string, string> = {}
-    for (const header in headers) {
-        if (headers[header] === undefined) {
-            continue
-        }
-        if (Array.isArray(headers[header])) {
-            convertedHeaders[header] = headers[header]!.toString()
-        } else {
-            convertedHeaders[header] = String(headers[header])
-        }
-    }
-    return convertedHeaders
-}
 
 const convertQueryParams = (
     urLSearchParams: URLSearchParams
