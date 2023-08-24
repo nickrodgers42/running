@@ -1,25 +1,22 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import './index.css';
-import App from './App';
 import reportWebVitals from './reportWebVitals';
 import {
   RouterProvider,
   createBrowserRouter
 } from 'react-router-dom'
+import Home from './Home';
 
-
-const app = <App />
+const app = <Home />
 const router = createBrowserRouter([
   {
     path: "/",
     element: app,
-    children: [
-      {
-        path: "exchangeToken",
-        element: app
-      }
-    ]
+    children: [{
+      path: "exchangeToken",
+      element: app
+    }]
   }
 ])
 

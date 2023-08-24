@@ -55,6 +55,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "packageDependencies": [\
             ["@types/node", "npm:20.4.10"],\
             ["concurrently", "npm:8.2.0"],\
+            ["find-yarn-workspace-root", "npm:2.0.0"],\
+            ["prettier", "npm:3.0.2"],\
             ["ts-node", "virtual:1c60d2e2c26501d017f91dcad65dfb99d6a5f9abf2f5a09ac344b1e9f220bf772a82290d942784ca5dc48dc91fa8cd2e98709e68029109f298d405430cee74cc#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -10566,6 +10568,16 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["find-yarn-workspace-root", [\
+        ["npm:2.0.0", {\
+          "packageLocation": "./.yarn/cache/find-yarn-workspace-root-npm-2.0.0-e58a501607-fa5ca8f9d0.zip/node_modules/find-yarn-workspace-root/",\
+          "packageDependencies": [\
+            ["find-yarn-workspace-root", "npm:2.0.0"],\
+            ["micromatch", "npm:4.0.5"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["flat-cache", [\
         ["npm:3.0.4", {\
           "packageLocation": "./.yarn/cache/flat-cache-npm-3.0.4-ee77e5911e-4fdd10ecbc.zip/node_modules/flat-cache/",\
@@ -16777,6 +16789,15 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
           "linkType": "HARD"\
         }]\
       ]],\
+      ["prettier", [\
+        ["npm:3.0.2", {\
+          "packageLocation": "./.yarn/cache/prettier-npm-3.0.2-2cbecb9037-118b59ddb6.zip/node_modules/prettier/",\
+          "packageDependencies": [\
+            ["prettier", "npm:3.0.2"]\
+          ],\
+          "linkType": "HARD"\
+        }]\
+      ]],\
       ["pretty-bytes", [\
         ["npm:5.6.0", {\
           "packageLocation": "./.yarn/cache/pretty-bytes-npm-5.6.0-0061079c9f-9c082500d1.zip/node_modules/pretty-bytes/",\
@@ -17704,6 +17725,8 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["running", "workspace:."],\
             ["@types/node", "npm:20.4.10"],\
             ["concurrently", "npm:8.2.0"],\
+            ["find-yarn-workspace-root", "npm:2.0.0"],\
+            ["prettier", "npm:3.0.2"],\
             ["ts-node", "virtual:1c60d2e2c26501d017f91dcad65dfb99d6a5f9abf2f5a09ac344b1e9f220bf772a82290d942784ca5dc48dc91fa8cd2e98709e68029109f298d405430cee74cc#npm:10.9.1"],\
             ["typescript", "patch:typescript@npm%3A5.1.6#~builtin<compat/typescript>::version=5.1.6&hash=5da071"]\
           ],\
@@ -18017,6 +18040,7 @@ function $$SETUP_STATE(hydrateRuntimeState, basePath) {
             ["@types/pg", "npm:8.10.2"],\
             ["axios", "npm:1.4.0"],\
             ["dotenv", "npm:16.3.1"],\
+            ["find-yarn-workspace-root", "npm:2.0.0"],\
             ["jest", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:29.6.2"],\
             ["nodemon", "npm:3.0.1"],\
             ["pg", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:8.11.2"],\

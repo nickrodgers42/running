@@ -1,22 +1,17 @@
-import React, { useEffect, useState } from 'react';
-import './App.css';
-import { CLIENT_ID } from './constants';
-import { useLocation } from 'react-router-dom';
-import {
-  ExchangeTokenCommand,
-  ExchangeTokenError,
-  ExchangeTokenOutput,
-  RunningClient
-} from "@running/client"
-import { Credentials } from './credentials';
+import React, { useEffect, useState } from 'react'
+import { ExchangeTokenCommand, RunningClient } from '@running/client'
+import { useLocation } from 'react-router-dom'
+import { Credentials } from './credentials'
+import { CLIENT_ID } from './constants'
 
 const endpoint = "http://localhost:8080"
 const region = "fake-region"
 const runningClient = new RunningClient({ endpoint, region })
 
-function App() {
+const Home = () => {
   const location = useLocation();
   const [credentials, setCredentials] = useState<Credentials | null>(null)
+  const [loading, setLoading] = useState(false)
 
   const auth = () => {
     console.log('attempting to authenticate with strava')
@@ -36,6 +31,7 @@ function App() {
       if (storedCredentials !== null) {
         console.log("stored credentials found")
         setCredentials(storedCredentials)
+        console.log(credentials)
       }
     } catch (error) {
       console.log("stored credentials not found")
@@ -60,6 +56,7 @@ function App() {
         const credentials = new Credentials(response.accessToken!, response.refreshToken!, response.expiresAt!)
         setCredentials(credentials)
         credentials.storeCredentials()
+        window.location.href = "/"
       }
       catch (error) {
         console.log(error)
@@ -67,17 +64,17 @@ function App() {
     }
 
     if (url.pathname === "/exchangeToken") {
+      setLoading(true)
       exchangeToken()
     }
-  }, [location])
+ }, [location])
 
-  return (
+  return loading ? <h1>Loading...</h1> :
     <div>
       <h1>Hello world</h1>
       <p>Location: {location.pathname}</p>
       <button onClick={auth}>Authenticate with Strava</button>
     </div>
-  );
 }
 
-export default App;
+export default Home
