@@ -1,6 +1,6 @@
 import { HttpRequest, HttpResponse } from "@aws-sdk/protocol-http"
 import * as dotenv from "dotenv"
-import http, { IncomingHttpHeaders, IncomingMessage, ServerResponse } from "http"
+import http, { IncomingMessage, ServerResponse } from "http"
 import { ExchangeTokenError, ExchangeTokenInput, ExchangeTokenOutput, getRunningServiceHandler } from "@running/server"
 import { Operation } from "@aws-smithy/server-common"
 import axios, { AxiosError, AxiosResponse } from 'axios'

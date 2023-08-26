@@ -3,8 +3,10 @@
   "packageManager": "yarn@3.6.1",
   "private": true,
   "scripts": {
-    "build": "yarn build:model && yarn build:server-pkg && yarn build:client-pkg && yarn install",
+    "build": "yarn build:model && yarn install:strava && yarn build:strava && yarn build:server-pkg && yarn build:client-pkg && yarn install",
     "build:model": "yarn workspace model build",
+    "install:strava": "./install-strava.sh",
+    "build:strava": "yarn workspace strava build",
     "lsp": "yarn dlx @yarnpkg/sdks base",
     "start": "concurrently -k -c \"auto\" \"yarn start:server\" \"yarn start:website\"",
     "start:server": "yarn workspace server start",

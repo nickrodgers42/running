@@ -15,3 +15,5 @@
 **/.gradle/
 **/.smithy.lsp.log
 **/.env
+
+packages/strava/*
