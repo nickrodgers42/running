@@ -43,4 +43,6 @@ export class Credentials {
   public areCredentialsExpired(): boolean {
     return new Date() < this.expiresAt
   }
+
+  public getAccessToken(): string { return this.accessToken }
 }

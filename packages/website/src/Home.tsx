@@ -3,6 +3,7 @@ import { ExchangeTokenCommand, RunningClient } from '@running/client'
 import { useLocation } from 'react-router-dom'
 import { Credentials } from './credentials'
 import { CLIENT_ID } from './constants'
+import User from './User'
 
 const endpoint = "http://localhost:8080"
 const region = "fake-region"
@@ -74,6 +75,7 @@ const Home = () => {
       <h1>Hello world</h1>
       <p>Location: {location.pathname}</p>
       <button onClick={auth}>Authenticate with Strava</button>
+      { credentials != null ? <User credentials={credentials} /> : <div /> }
     </div>
 }
 
