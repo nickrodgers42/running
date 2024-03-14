@@ -12,52 +12,56 @@ use aws.api#service
         "amz-sdk-invocation-id"
     ]
 })
+
 service Running {
     version: "2023-08-13"
     operations: [
-        ExchangeToken
+        GetAuthenticated
+        Ping
     ]
 }
 
-@http(method: "POST", "uri": "/exchangeToken", code: 200)
-operation ExchangeToken {
-    input: ExchangeTokenInput
-    output: ExchangeTokenOutput
-    errors: [ ValidationException, ExchangeTokenError ]
+@readonly
+@http(method: "GET", "uri": "/stravaAuthenticated/{username}", code: 200)
+operation GetAuthenticated {
+    input: GetAuthenticatedInput
+    output: GetAuthenticatedOutput
+    errors: [ GetAuthenticatedError, ValidationException ]
 }
 
-@input
-structure ExchangeTokenInput {
+structure GetAuthenticatedInput {
     @required
-    exchangeToken: String
+    @httpLabel
+    username: String
 }
 
-@output
-structure ExchangeTokenOutput {
-    @required
-    accessToken: String
-
-    @required
-    refreshToken: String
-
-    @required
-    athlete: Athlete
-
-    @required
-    expiresAt: Integer
-
-    @required
-    expiresIn: Integer
-}
-
-structure Athlete {
-    @required
-    id: Integer
+structure GetAuthenticatedOutput {
+    isAuthenticated: Boolean
 }
 
 @error("server")
 @httpError(500)
-structure ExchangeTokenError {
+structure GetAuthenticatedError {
     @required
+    message: String
+}
+
+structure AuthUrl {
+    url: String
+}
+
+@readonly
+@http(method: "GET", "uri": "/ping", code: 200)
+operation Ping {
+    input: PingInput
+    output: PingOutput
+    errors: [ ValidationException ]
+}
+
+@input
+structure PingInput { }
+
+@output
+structure PingOutput {
     message: String
 }

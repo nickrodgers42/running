@@ -1,54 +1,11 @@
 import { HttpRequest, HttpResponse } from "@aws-sdk/protocol-http"
-import * as dotenv from "dotenv"
+import { getRunningServiceHandler } from "@running/server";
 import http, { IncomingMessage, ServerResponse } from "http"
-import { ExchangeTokenError, ExchangeTokenInput, ExchangeTokenOutput, getRunningServiceHandler } from "@running/server"
-import { Operation } from "@aws-smithy/server-common"
-import axios, { AxiosError, AxiosResponse } from 'axios'
-import workspacesRoot from "find-yarn-workspace-root"
+import { Logger} from 'tslog'
+import GetAuthenticatedOperation from "./operation/getAuthenticatedOperation";
+import PingOperation from "./operation/pingOperation";
 
-dotenv.config({ path: `${workspacesRoot()}/.env` })
-const PORT = 8080
-
-export interface ExchangeTokenContext { }
-
-const ExchangeTokenOperation: Operation<
-    ExchangeTokenInput,
-    ExchangeTokenOutput,
-    ExchangeTokenContext
-> = async (input: ExchangeTokenInput, context: any) => {
-    let response: AxiosResponse;
-    try {
-        response = await axios.post(`https://www.strava.com/oauth/token`, {
-                client_id: process.env.CLIENT_ID,
-                client_secret: process.env.CLIENT_SECRET,
-                code: input.exchangeToken,
-                grant_type: "authorization_code"
-            },
-            {
-                headers: {
-                    'Accept': 'application/json',
-                    'Content-Type': 'application/json'
-                }
-            })
-    } catch(error) {
-        if (error instanceof AxiosError) {
-            console.log("Couldn't exchange token")
-            console.log(error.message)
-        }
-        throw new ExchangeTokenError({ message: "Unable to exchange token for accessToken" })
-    }
-    return {
-        accessToken: response.data.access_token,
-        refreshToken: response.data.refresh_token,
-        athlete: response.data.athlete,
-        expiresAt: response.data.expires_at,
-        expiresIn: response.data.expires_in
-    }
-}
-
-const runningServiceHander = getRunningServiceHandler({
-    ExchangeToken: ExchangeTokenOperation
-})
+const PORT = 8080;
 
 const convertQueryParams = (
     urLSearchParams: URLSearchParams
@@ -60,16 +17,21 @@ const convertQueryParams = (
     }
     return convertedQueryParams
 }
+const runningServiceHander = getRunningServiceHandler({
+    GetAuthenticated: GetAuthenticatedOperation,
+    Ping: PingOperation
+})
 
+const logger = new Logger({ name: "main" })
 const server = http
     .createServer((req: IncomingMessage, res: ServerResponse) => {
-        console.log("Recieved request")
-        console.log("Path:", req.url)
-        console.log("Method:", req.method)
-        console.log("Headers:", req.headers ?? "this request has no headers")
+        logger.info("Recieved request")
+        logger.info("Path:", req.url)
+        logger.info("Method:", req.method)
+        logger.info("Headers:", req.headers ?? "this request has no headers")
         const url = new URL(req.url || "", `http://${req.headers.host}`)
-        console.log("Url:", url)
-        console.log("Query:", convertQueryParams(url.searchParams))
+        logger.info("Url:", url)
+        logger.info("Query:", convertQueryParams(url.searchParams))
         let body = ""
 
         req.on("data", (chunk) => {
@@ -77,7 +39,7 @@ const server = http
         })
 
         req.on("end", async () => {
-            console.log(
+            logger.info(
                 "body:",
                 body !== "" ? body : "this request has no body"
             )
@@ -108,9 +70,9 @@ const server = http
                     res.setHeader(key, httpResponse.headers[key])
                 }
             }
-            console.log(httpResponse)
-            console.log(res.getHeaders())
-            console.log(res.statusCode)
+            logger.info(httpResponse)
+            logger.info(res.getHeaders())
+            logger.info(res.statusCode)
             res.end(httpResponse.body)
         })
 
@@ -118,6 +80,5 @@ const server = http
     .listen(PORT)
 
 server.on("listening", () => {
-    console.log(`listening on port ${PORT}`)
+    logger.info(`listening on port ${PORT}`)
 })
-
