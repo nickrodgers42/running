@@ -2,7 +2,7 @@
   "name": "server",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "start": "yarn nodemon src/index.ts | pino-pretty"
+    "start": "yarn nodemon src/main.ts | pino-pretty"
   },
   "dependencies": {
     "@running/server": "workspace:^",

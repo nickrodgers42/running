@@ -28,25 +28,12 @@ const runningServiceHander = getRunningServiceHandler({
 const logger = pino()
 const server = http
     .createServer((req: IncomingMessage, res: ServerResponse) => {
-        logger.info("Recieved request")
-        logger.info("Path: %s", req.url)
-        logger.info("Method: %s", req.method)
-        logger.info(req.headers ?? "this request has no headers", "Headers:")
         const url = new URL(req.url || "", `http://${req.headers.host}`)
-        logger.info("Url: %s", url.toString())
-        logger.info(convertQueryParams(url.searchParams), "Query:")
         let body = ""
-
         req.on("data", (chunk) => {
             body += chunk
         })
-
         req.on("end", async () => {
-            logger.info(
-                "body:",
-                body !== "" ? body : "this request has no body"
-            )
-
             const httpRequest = new HttpRequest({
                 method: req.method,
                 path: url.pathname,
@@ -55,6 +42,8 @@ const server = http
                 body: body === "" ? undefined : Buffer.from(body),
                 query: convertQueryParams(url.searchParams) as any,
             })
+            
+            logger.info({...httpRequest, body: body}, "Received Request")
 
             const httpResponse: HttpResponse =
                 await runningServiceHander.handle(httpRequest, {})
@@ -73,9 +62,7 @@ const server = http
                     res.setHeader(key, httpResponse.headers[key])
                 }
             }
-            logger.info(httpResponse, "response: ")
-            logger.info(res.getHeaders(), "respnse header: ")
-            logger.info(res.statusCode, "response status: ")
+            logger.info(httpResponse, "Response")
             res.end(httpResponse.body)
         })
 
