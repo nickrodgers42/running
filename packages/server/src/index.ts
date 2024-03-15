@@ -5,6 +5,7 @@ import { URL } from "url";
 import pino from "pino";
 import GetAuthenticatedOperation from "./operation/getAuthenticatedOperation";
 import PingOperation from "./operation/pingOperation";
+import ExchangeTokenOperation from "./operation/exchangeTokenOperation";
 
 const PORT = 8080;
 

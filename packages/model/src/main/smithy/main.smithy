@@ -17,6 +17,7 @@ service Running {
     version: "2023-08-13"
     operations: [
         GetAuthenticated
+        ExchangeToken
         Ping
     ]
 }
@@ -36,7 +37,10 @@ structure GetAuthenticatedInput {
 }
 
 structure GetAuthenticatedOutput {
+    @required
     isAuthenticated: Boolean
+
+    authUrl: String
 }
 
 @error("server")
@@ -64,4 +68,30 @@ structure PingInput { }
 @output
 structure PingOutput {
     message: String
+}
+
+@readonly
+@http(method: "GET", "uri": "/exchangeToken")
+operation ExchangeToken {
+    input: ExchangeTokenInput
+    output: ExchangeTokenOutput
+    errors: [ ValidationException ]
+}
+
+structure ExchangeTokenInput {
+    @httpQuery("state")
+    state: String
+    @httpQuery("code")
+    code: String
+    @httpQuery("scope")
+    scope: Scope
+}
+
+list Scope {
+    member: String
+}
+
+structure ExchangeTokenOutput {
+    @httpPayload
+    content: String
 }
