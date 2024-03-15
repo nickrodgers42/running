@@ -1,7 +1,8 @@
 import { HttpRequest, HttpResponse } from "@aws-sdk/protocol-http"
 import { getRunningServiceHandler } from "@running/server";
 import http, { IncomingMessage, ServerResponse } from "http"
-import { Logger} from 'tslog'
+import { URL } from "url";
+import pino from "pino";
 import GetAuthenticatedOperation from "./operation/getAuthenticatedOperation";
 import PingOperation from "./operation/pingOperation";
 
@@ -19,19 +20,20 @@ const convertQueryParams = (
 }
 const runningServiceHander = getRunningServiceHandler({
     GetAuthenticated: GetAuthenticatedOperation,
-    Ping: PingOperation
+    Ping: PingOperation,
+    ExchangeToken: ExchangeTokenOperation
 })
 
-const logger = new Logger({ name: "main" })
+const logger = pino()
 const server = http
     .createServer((req: IncomingMessage, res: ServerResponse) => {
         logger.info("Recieved request")
-        logger.info("Path:", req.url)
-        logger.info("Method:", req.method)
-        logger.info("Headers:", req.headers ?? "this request has no headers")
+        logger.info("Path: %s", req.url)
+        logger.info("Method: %s", req.method)
+        logger.info(req.headers ?? "this request has no headers", "Headers:")
         const url = new URL(req.url || "", `http://${req.headers.host}`)
-        logger.info("Url:", url)
-        logger.info("Query:", convertQueryParams(url.searchParams))
+        logger.info("Url: %s", url.toString())
+        logger.info(convertQueryParams(url.searchParams), "Query:")
         let body = ""
 
         req.on("data", (chunk) => {
@@ -70,9 +72,9 @@ const server = http
                     res.setHeader(key, httpResponse.headers[key])
                 }
             }
-            logger.info(httpResponse)
-            logger.info(res.getHeaders())
-            logger.info(res.statusCode)
+            logger.info(httpResponse, "response: ")
+            logger.info(res.getHeaders(), "respnse header: ")
+            logger.info(res.statusCode, "response status: ")
             res.end(httpResponse.body)
         })
 
