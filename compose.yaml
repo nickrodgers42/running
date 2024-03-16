@@ -1,0 +1,25 @@
+name: running-app
+
+services:
+  website:
+    build:
+      target: website
+    command: sh -c "yarn start:website"
+    ports:
+      - 3000:3000
+    develop:
+      watch:
+        - path: ./packages/website
+          target: /running/packages/website
+          action: sync
+  server:
+    build:
+      target: server
+    command: sh -c "yarn start:server"
+    ports:
+      - 8080:8080
+    develop:
+      watch:
+        - path: ./packages/server
+          target: /running/packages/server
+          action: sync
