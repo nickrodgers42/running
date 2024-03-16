@@ -1,6 +1,7 @@
 {
   "name": "running",
   "packageManager": "yarn@4.1.1",
+  "private": "true",
   "scripts": {
     "build": "yarn build:model && yarn build:projections && yarn install",
     "build:model": "yarn workspace model build",

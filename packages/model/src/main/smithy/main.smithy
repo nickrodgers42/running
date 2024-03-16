@@ -80,10 +80,15 @@ operation ExchangeToken {
 
 structure ExchangeTokenInput {
     @httpQuery("state")
+    @required
     state: String
+
     @httpQuery("code")
+    @required
     code: String
     @httpQuery("scope")
+
+    @required
     scope: Scope
 }
 
@@ -92,6 +97,9 @@ list Scope {
 }
 
 structure ExchangeTokenOutput {
-    @httpPayload
+    @httpHeader("Location")
     content: String
+
+    @httpResponseCode
+    responseCode: Integer
 }
