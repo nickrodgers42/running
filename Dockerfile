@@ -19,6 +19,11 @@ RUN yarn build:projections
 RUN yarn install
 
 
+FROM postgres as db
+
+COPY packages/database/sql/schema.sql /docker-entrypoint-initdb.d/
+
+
 FROM base AS website
 
 COPY packages/website ./packages/website

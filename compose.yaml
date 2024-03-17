@@ -1,6 +1,15 @@
 name: running-app
 
+volumes:
+  database:
+
 services:
+  database:
+    build:
+      target: db
+    env_file: .env
+    ports:
+      - 8090:5432
   website:
     build:
       target: website
