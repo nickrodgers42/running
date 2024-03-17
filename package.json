@@ -1,13 +1,13 @@
 {
   "name": "running",
   "packageManager": "yarn@4.1.1",
-  "private": "true",
   "scripts": {
     "build": "yarn build:model && yarn build:projections && yarn install",
     "build:model": "yarn workspace model build",
     "build:projections": "yarn build:server-lib && yarn build:client-lib",
     "build:server-lib": "yarn workspace @running/server build",
     "build:client-lib": "yarn workspace @running/client build",
+    "build:strava": "yarn workspace strava build",
     "start:website": "yarn workspace website run dev",
     "start:server": "yarn workspace server start",
     "start": "concurrently  -k -c \"auto\" \"yarn start:server\" \"yarn start:website\"",

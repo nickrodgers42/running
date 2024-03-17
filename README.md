@@ -20,5 +20,6 @@ A Smithy model to define the API between the website and the Server
 
 ## Development
 
-To build run `yarn build` from the base directory, which will build the model
-and install dependencies. Then `yarn start` to start the server and website
+To build run `docker compose up`
+
+To watch run `docker compose watch`
