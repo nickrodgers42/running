@@ -6,9 +6,9 @@ import SmithyServer from "./server/server";
 import { PORT } from "./constants";
 
 const runningServiceHander = getRunningServiceHandler({
-    GetAuthenticated: GetAuthenticatedOperation,
-    Ping: PingOperation,
-    ExchangeToken: ExchangeTokenOperation
+    GetAuthenticated: new GetAuthenticatedOperation().handle,
+    Ping: new PingOperation().handle,
+    ExchangeToken: new ExchangeTokenOperation().handle
 })
 
 new SmithyServer(runningServiceHander).listen(PORT)
