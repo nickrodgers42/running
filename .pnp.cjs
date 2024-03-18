@@ -2448,6 +2448,15 @@ const RAW_RUNTIME_STATE =
         "linkType": "HARD"\
       }]\
     ]],\
+    ["dotenv", [\
+      ["npm:16.4.5", {\
+        "packageLocation": "../../.local/share/yarn/berry/cache/dotenv-npm-16.4.5-bcb20eb95d-10c0.zip/node_modules/dotenv/",\
+        "packageDependencies": [\
+          ["dotenv", "npm:16.4.5"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
     ["downlevel-dts", [\
       ["npm:0.10.1", {\
         "packageLocation": "../../.local/share/yarn/berry/cache/downlevel-dts-npm-0.10.1-48ccc65de1-10c0.zip/node_modules/downlevel-dts/",\
@@ -3233,6 +3242,16 @@ const RAW_RUNTIME_STATE =
           ["find-up", "npm:5.0.0"],\
           ["locate-path", "npm:6.0.0"],\
           ["path-exists", "npm:4.0.0"]\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["find-yarn-workspace-root", [\
+      ["npm:2.0.0", {\
+        "packageLocation": "../../.local/share/yarn/berry/cache/find-yarn-workspace-root-npm-2.0.0-e58a501607-10c0.zip/node_modules/find-yarn-workspace-root/",\
+        "packageDependencies": [\
+          ["find-yarn-workspace-root", "npm:2.0.0"],\
+          ["micromatch", "npm:4.0.5"]\
         ],\
         "linkType": "HARD"\
       }]\
@@ -5719,6 +5738,8 @@ const RAW_RUNTIME_STATE =
           ["@types/node", "npm:20.11.27"],\
           ["@types/pg", "npm:8.11.2"],\
           ["axios", "npm:1.6.7"],\
+          ["dotenv", "npm:16.4.5"],\
+          ["find-yarn-workspace-root", "npm:2.0.0"],\
           ["nodemon", "npm:3.1.0"],\
           ["pg", "virtual:2499dbb93d824027565d71b0716c4fb8b548ad61955d0a0286bfb3c5b4058e227894b6691d96808c00f576db14870018375210362c26ee321ea99fd6ed041c74#npm:8.11.3"],\
           ["pino", "npm:8.19.0"],\

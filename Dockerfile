@@ -48,5 +48,6 @@ RUN yarn install
 FROM base AS server
 
 COPY --from=strava /strava ./packages/strava
+COPY .env .
 COPY packages/server ./packages/server
 RUN yarn install
