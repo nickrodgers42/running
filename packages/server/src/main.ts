@@ -9,10 +9,12 @@ import findWorkspaceRoot from "find-yarn-workspace-root";
 
 dotenv({ path: `${findWorkspaceRoot()}/.env`})
 
+const exchangeTokenOperation = new ExchangeTokenOperation()
+
 const runningServiceHander = getRunningServiceHandler({
     GetAuthenticated: new GetAuthenticatedOperation().handle,
     Ping: new PingOperation().handle,
-    ExchangeToken: new ExchangeTokenOperation().handle
+    ExchangeToken: exchangeTokenOperation.handle.bind(exchangeTokenOperation)
 })
 
 new SmithyServer(runningServiceHander).listen(PORT)

@@ -86,8 +86,8 @@ structure ExchangeTokenInput {
     @httpQuery("code")
     @required
     code: String
-    @httpQuery("scope")
 
+    @httpQuery("scope")
     @required
     scope: Scope
 }

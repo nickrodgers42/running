@@ -3,7 +3,7 @@ import { ServiceHandler } from "@aws-smithy/server-common";
 import http, { IncomingMessage, Server, ServerResponse } from "http";
 import pino from "pino";
 
-const logger = pino()
+const log = pino()
 
 export default class SmithyServer {
     private httpServer: Server<typeof IncomingMessage, typeof ServerResponse>
@@ -39,7 +39,7 @@ export default class SmithyServer {
                 query: this.convertQueryParams(url.searchParams) as any,
             })
 
-            logger.info({ ...httpRequest, body: body }, "Received Request")
+            log.info({ ...httpRequest, body: body }, "Received Request")
 
             const httpResponse: HttpResponse = await this.serviceHandler.handle(httpRequest, {})
 
@@ -57,14 +57,14 @@ export default class SmithyServer {
                     res.setHeader(key, httpResponse.headers[key])
                 }
             }
-            logger.info(httpResponse, "Response")
+            log.info(httpResponse, "Response")
             res.end(httpResponse.body)
         })
     }
 
     listen(port: number): SmithyServer {
         this.httpServer.on("listening", () => {
-            logger.info(`listening on port ${port}`)
+            log.info(`listening on port ${port}`)
         })
         this.httpServer.listen(port)
         return this
