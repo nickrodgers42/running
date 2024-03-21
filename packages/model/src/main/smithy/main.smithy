@@ -71,7 +71,7 @@ structure PingOutput {
 }
 
 @readonly
-@http(method: "GET", "uri": "/exchangeToken")
+@http(method: "GET", "uri": "/exchangeToken/{username}")
 operation ExchangeToken {
     input: ExchangeTokenInput
     output: ExchangeTokenOutput
@@ -79,6 +79,10 @@ operation ExchangeToken {
 }
 
 structure ExchangeTokenInput {
+    @httpLabel
+    @required
+    username: String
+
     @httpQuery("state")
     @required
     state: String

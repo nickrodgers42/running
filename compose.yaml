@@ -8,8 +8,8 @@ services:
     build:
       target: db
     env_file: .env
-    ports:
-      - 8090:5432
+    volumes:
+      - database:/var/lib/postgresql/data
   website:
     build:
       target: website

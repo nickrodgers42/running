@@ -3,10 +3,10 @@ import { CLIENT_ID, PORT } from "../constants";
 import { OperationContext, OperationHandler } from "./operationHandler";
 
 export default class GetAuthenticatedOperation implements OperationHandler<GetAuthenticatedInput, GetAuthenticatedOutput, OperationContext> {
-    async handle(_input: GetAuthenticatedInput, _context: OperationContext): Promise<GetAuthenticatedOutput> {
+    async handle(input: GetAuthenticatedInput, _context: OperationContext): Promise<GetAuthenticatedOutput> {
         const authUrl = new URL('https://www.strava.com/oauth/authorize');
 
-        const redirectUri = new URL(`http://localhost:${PORT}/exchangeToken`);
+        const redirectUri = new URL(`http://localhost:${PORT}/exchangeToken/${input.username}`);
         const searchParams = {
             "client_id": CLIENT_ID,
             "response_type": "code",
