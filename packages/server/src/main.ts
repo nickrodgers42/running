@@ -3,7 +3,7 @@ import GetAuthenticatedOperation from "./operation/getAuthenticatedOperation";
 import PingOperation from "./operation/pingOperation";
 import ExchangeTokenOperation from "./operation/exchangeTokenOperation";
 import SmithyServer from "./server/server";
-import { PORT } from "./constants";
+import { SERVER_PORT } from "./constants";
 import { config as dotenv } from 'dotenv';
 import findWorkspaceRoot from "find-yarn-workspace-root";
 import { Pool } from "pg";
@@ -20,12 +20,13 @@ const pg = new Pool({
 
 const tokenDataStore = new TokenDataStore(pg)
 
+const getAuthenticatedOperation = new GetAuthenticatedOperation(tokenDataStore)
 const exchangeTokenOperation = new ExchangeTokenOperation(tokenDataStore)
 
 const runningServiceHander = getRunningServiceHandler({
-    GetAuthenticated: new GetAuthenticatedOperation().handle,
+    GetAuthenticated: getAuthenticatedOperation.handle.bind(getAuthenticatedOperation),
     Ping: new PingOperation().handle,
     ExchangeToken: exchangeTokenOperation.handle.bind(exchangeTokenOperation)
 })
 
-new SmithyServer(runningServiceHander).listen(PORT)
+new SmithyServer(runningServiceHander).listen(SERVER_PORT)

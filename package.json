@@ -8,7 +8,7 @@
     "build:server-lib": "yarn workspace @running/server build",
     "build:client-lib": "yarn workspace @running/client build",
     "build:strava": "yarn workspace strava build",
-    "start:website": "yarn workspace website run dev",
+    "start:website": "yarn workspace website start",
     "start:server": "yarn workspace server start",
     "start": "concurrently  -k -c \"auto\" \"yarn start:server\" \"yarn start:website\"",
     "lsp": "yarn dlx @yarnpkg/sdks base"
@@ -22,6 +22,8 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
-    "concurrently": "^8.2.2"
+    "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
+    "eslint-config-prettier": "^9.1.0"
   }
 }
