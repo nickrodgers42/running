@@ -2,25 +2,30 @@
   "name": "server",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "start": "yarn nodemon src/main.ts | pino-pretty"
+    "build": "tsc",
+    "start": "node build/main.js",
+    "start:dev": "yarn nodemon src/main.ts | pino-pretty",
+    "lint": "eslint",
+    "lintfix": "eslint --fix"
   },
   "dependencies": {
+    "@aws-sdk/protocol-http": "^3.374.0",
+    "@aws-smithy/server-common": "^1.0.0-alpha.10",
     "@running/server": "workspace:^",
+    "@smithy/types": "^2.12.0",
+    "@types/node": "^20.11.27",
     "@types/pg": "^8.11.2",
-    "dotenv": "^16.4.5",
+    "axios": "^1.6.8",
     "find-yarn-workspace-root": "^2.0.0",
-    "nodemon": "^3.1.0",
     "pg": "^8.11.3",
     "pino": "^8.19.0",
-    "pino-pretty": "^10.3.1",
     "strava": "workspace:^"
   },
   "devDependencies": {
-    "@aws-sdk/protocol-http": "^3.374.0",
-    "@aws-smithy/server-common": "^1.0.0-alpha.10",
-    "@types/node": "^20.11.27",
-    "axios": "^1.6.7",
+    "dotenv": "^16.4.5",
+    "nodemon": "^3.1.0",
+    "pino-pretty": "^10.3.1",
     "ts-node": "^10.9.2",
-    "typescript": "^5.4.2"
+    "typescript": "^5.4.3"
   }
 }
