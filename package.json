@@ -10,7 +10,7 @@
     "build:strava": "yarn workspace strava build",
     "start:website": "yarn workspace website start",
     "start:server": "yarn workspace server start",
-    "start": "concurrently  -k -c \"auto\" \"yarn start:server\" \"yarn start:website\"",
+    "start": "concurrently -k -c \"auto\" \"yarn start:server\" \"yarn start:website\"",
     "lsp": "yarn dlx @yarnpkg/sdks base"
   },
   "workspaces": [
@@ -22,6 +22,8 @@
     "typescript": "^5.4.2"
   },
   "devDependencies": {
+    "@typescript-eslint/eslint-plugin": "^7.4.0",
+    "@typescript-eslint/parser": "^7.4.0",
     "concurrently": "^8.2.2",
     "eslint": "^8.57.0",
     "eslint-config-prettier": "^9.1.0"
