@@ -1,6 +1,6 @@
 import { Pool } from "pg"
-import { StravaToken } from "../operation/exchangeTokenOperation"
 import pino from "pino"
+import StravaToken from "../token/stravaToken"
 
 const log = pino()
 
@@ -22,7 +22,7 @@ export default class TokenDataStore {
                 "SELECT user_id FROM users WHERE username = $1::text LIMIT 1;",
                 [username],
             )
-            console.log(response.rows)
+            log.info(response.rows)
             return 1
         } catch (error) {
             log.error(error)
@@ -38,8 +38,8 @@ export default class TokenDataStore {
                 "SELECT user_id FROM tokens WHERE user_id = $1::int",
                 [userId],
             )
-            console.log(response)
-            console.log(response.rows.length > 0)
+            log.info(response)
+            log.info(response.rows.length > 0)
             return response.rows.length > 0
         } catch (error) {
             log.error(error)
@@ -57,12 +57,12 @@ export default class TokenDataStore {
                 `,
                 [
                     userId.toString(),
-                    token.expiresAt.toString(),
-                    token.refreshToken.toString(),
-                    token.accessToken.toString(),
+                    token.getExpiresAt().toString(),
+                    token.getRefreshToken().toString(),
+                    token.getAccessToken().toString(),
                 ],
             )
-            console.log(response)
+            log.info(response)
         } catch (error) {
             log.error(error)
             throw Error("Unable to save token")

@@ -10,7 +10,7 @@ export default class SmithyServer {
     private httpServer: Server<typeof IncomingMessage, typeof ServerResponse>
     private serviceHandler: ServiceHandler
     private corsHeaders = {
-        "Access-control-allow-origin": "*",
+        "access-control-allow-origin": "*",
         "access-control-allow-headers": "*",
     }
 

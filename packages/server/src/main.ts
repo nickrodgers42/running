@@ -4,12 +4,11 @@ import PingOperation from "./operation/pingOperation"
 import ExchangeTokenOperation from "./operation/exchangeTokenOperation"
 import SmithyServer from "./server/server"
 import { SERVER_PORT } from "./constants"
-import { config as dotenv } from "dotenv"
-import findWorkspaceRoot from "find-yarn-workspace-root"
 import { Pool } from "pg"
 import TokenDataStore from "./datastore/TokenDataStore"
+import { EnvLoader } from "./envLoader"
 
-dotenv({ path: `${findWorkspaceRoot()}/.env` })
+new EnvLoader().load()
 
 const pg = new Pool({
     user: process.env.POSTGRES_USER,
