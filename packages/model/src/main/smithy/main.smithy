@@ -7,11 +7,7 @@ use aws.api#service
 
 @service(sdkId: "Running")
 @restJson1
-@cors({
-    additionalAllowedHeaders: [
-        "amz-sdk-invocation-id"
-    ]
-})
+@cors({})
 
 service Running {
     version: "2023-08-13"

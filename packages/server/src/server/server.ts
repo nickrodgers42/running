@@ -9,6 +9,10 @@ const log = pino()
 export default class SmithyServer {
     private httpServer: Server<typeof IncomingMessage, typeof ServerResponse>
     private serviceHandler: ServiceHandler
+    private corsHeaders = {
+        "Access-control-allow-origin": "*",
+        "access-control-allow-headers": "*",
+    }
 
     constructor(serviceHandler: ServiceHandler) {
         this.serviceHandler = serviceHandler
@@ -27,10 +31,18 @@ export default class SmithyServer {
             body.push(chunk)
         })
         req.on("end", async () => {
+            if (req.method == "OPTIONS") {
+                res.writeHead(200, {
+                    ...this.corsHeaders,
+                    allow: "OPTIONS,GET,HEAD,POST",
+                })
+                res.end()
+                return
+            }
             const httpRequest = new HttpRequest({
                 method: req.method,
                 path: url.pathname,
-                port: 8080,
+                port: url.port == "" ? undefined : Number(url.port),
                 headers: req.headers as HeaderBag,
                 body: Buffer.concat(body),
                 query: Object.fromEntries(
@@ -49,8 +61,7 @@ export default class SmithyServer {
             )
             httpResponse.headers = {
                 ...httpResponse.headers,
-                "access-control-allow-origin": "*",
-                "access-control-allow-headers": "*",
+                ...this.corsHeaders
             }
 
             log.info(httpResponse, "Response")

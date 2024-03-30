@@ -12,10 +12,10 @@ import TokenDataStore from "./datastore/TokenDataStore"
 dotenv({ path: `${findWorkspaceRoot()}/.env` })
 
 const pg = new Pool({
-    host: "database",
-    port: 5432,
     user: process.env.POSTGRES_USER,
     password: process.env.POSTGRES_PASSWORD,
+    host: process.env.POSTGRES_HOST,
+    port: Number(process.env.POSTGRES_PORT)
 })
 
 const tokenDataStore = new TokenDataStore(pg)
