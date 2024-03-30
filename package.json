@@ -2,7 +2,7 @@
   "name": "running",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "build": "yarn build:model && yarn build:projections && yarn install",
+    "build": "yarn build:model && yarn build:projections && yarn install && yarn build:db",
     "build:db": "docker build -t db --target db .",
     "build:model": "yarn workspace model build",
     "build:projections": "yarn build:server-lib && yarn build:client-lib",
