@@ -1,10 +1,10 @@
-import pino from "pino"
 import { CLIENT_ID, STRAVA_AUTH_ENDPOINT } from "../constants"
 import axios from "axios"
+import Logger from "../logger/Logger"
 
 export class StravaAuthorizationError extends Error { }
 
-const log = pino()
+const log = Logger.create()
 
 export enum TokenType {
     BEARER = "bearer"
