@@ -32,8 +32,10 @@ RUN yarn set version stable
 
 workdir /running
 COPY --from=model /model ./packages/model
+COPY ./node_modules .
 COPY package.json .
 COPY yarn.lock .
+COPY .yarnrc.yml .
 RUN yarn install
 RUN yarn build:projections
 RUN yarn install
