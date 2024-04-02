@@ -2,17 +2,25 @@ import { CLIENT_ID, STRAVA_AUTH_ENDPOINT } from "../constants"
 import axios from "axios"
 import Logger from "../logger/Logger"
 
-export class StravaAuthorizationError extends Error { }
+export class StravaAuthorizationError extends Error {}
+export class MissingSecretError extends Error {}
 
 const log = Logger.create()
 
 export enum TokenType {
-    BEARER = "bearer"
+    BEARER = "bearer",
 }
 
 export enum GrantType {
     AUTHORIZATION_CODE = "authorization_code",
-    REFRESH_TOKEN = "refresh_token"
+    REFRESH_TOKEN = "refresh_token",
+}
+
+interface StravaAuthParams {
+    client_id: string
+    client_secret: string
+    code: string
+    grant_type: GrantType
 }
 
 export default class StravaToken {
@@ -54,8 +62,26 @@ export default class StravaToken {
         return this.expiresAt
     }
 
+    private static async exchangeTokens(
+        queryParams: StravaAuthParams,
+    ): Promise<StravaToken> {
+        const response = await axios.post(this.authUrl.toString(), queryParams)
+        const token = new StravaToken(
+            response.data["access_token"],
+            response.data["refresh_token"],
+            new Date(response.data["expires_at"] * 1000),
+            response.data["token_type"],
+        )
+        return token
+    }
+
     static async fetchToken(exchangeCode: string): Promise<StravaToken> {
-        const queryParams = {
+        if (process.env.CLIENT_SECRET == undefined) {
+            throw new MissingSecretError(
+                "Client Secret not found in environment",
+            )
+        }
+        const queryParams: StravaAuthParams = {
             client_id: CLIENT_ID.toString(),
             client_secret: process.env.CLIENT_SECRET,
             code: exchangeCode,
@@ -64,17 +90,7 @@ export default class StravaToken {
 
         try {
             log.info("Making a request to Strava for credentials")
-            const response = await axios.post(
-                this.authUrl.toString(),
-                queryParams,
-            )
-            const token = new StravaToken(
-                response.data["access_token"],
-                response.data["refresh_token"],
-                new Date(response.data["expires_at"] * 1000),
-                response.data["token_type"],
-            )
-            return token
+            return await StravaToken.exchangeTokens(queryParams)
         } catch (err) {
             log.error(err)
             throw new StravaAuthorizationError(
@@ -84,29 +100,24 @@ export default class StravaToken {
     }
 
     static async refresh(token: StravaToken): Promise<StravaToken> {
-        const queryParams = {
+        if (process.env.CLIENT_SECRET == undefined) {
+            throw new MissingSecretError(
+                "Client Secret not found in environment",
+            )
+        }
+        const queryParams: StravaAuthParams = {
             client_id: CLIENT_ID.toString(),
             client_secret: process.env.CLIENT_SECRET,
             code: token.getRefreshToken(),
-            grant_type: GrantType.REFRESH_TOKEN
+            grant_type: GrantType.REFRESH_TOKEN,
         }
         try {
             log.info("Refreshing token with Strava")
-            const response = await axios.post(
-                StravaToken.authUrl.toString(),
-                queryParams
-            )
-            const token = new StravaToken(
-                response.data["access_token"],
-                response.data["refresh_token"],
-                new Date(response.data["expires_at"] * 1000),
-                response.data["token_type"],
-            )
-            return token
+            return await StravaToken.exchangeTokens(queryParams)
         } catch (err) {
             log.error(err)
             throw new StravaAuthorizationError(
-                `Could not refresh token with strava. Error ${err}`
+                `Could not refresh token with strava. Error ${err}`,
             )
         }
     }
