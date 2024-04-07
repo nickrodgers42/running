@@ -1,8 +1,8 @@
 import { Pool } from "pg"
-import pino from "pino"
-import StravaToken, { TokenType } from "../token/stravaToken"
+import StravaToken from "../token/stravaToken"
+import Logger from "../logger/Logger"
 
-const log = pino()
+const log = Logger.create()
 
 export class DataStoreError extends Error {}
 
@@ -30,66 +30,68 @@ export default class TokenDataStore {
     }
 
     async hasToken(username: string) {
-        const userId = await this.getUserId(username)
         try {
-            const client = await this.pg.connect()
-            const response = await client.query(
-                "SELECT user_id FROM tokens WHERE user_id = $1::int",
-                [userId],
-            )
-            log.info(response)
-            log.info(response.rows.length > 0)
-            return response.rows.length > 0
-        } catch (error) {
-            log.error(error)
+            await this.loadStravaToken(username)
+            return true
+        } catch (err) {
+            if (
+                err instanceof DataStoreError &&
+                (err as DataStoreError).message == "UserId not found"
+            ) {
+                return false
+            }
+            throw err
         }
     }
 
     async saveStravaToken(username: string, token: StravaToken) {
         const userId = await this.getUserId(username)
         try {
-            const response = this.pg.query(
+            await this.pg.query(
                 `
-                INSERT INTO tokens(user_id, expires_at, refresh_token, access_token, token_type)
-                VALUES($1::int, to_timestamp($2), $3, $4, $5);
+                    INSERT INTO tokens(user_id, access_token, refresh_token, expires_at, token_type)
+                    VALUES($1::int, to_timestamp($2), $3, $4, $5);
                 `,
                 [
                     userId.toString(),
-                    (token.getExpiresAt().getTime() / 1000).toString(),
-                    token.getRefreshToken(),
                     token.getAccessToken(),
+                    token.getRefreshToken(),
+                    (token.getExpiresAt().getTime() / 1000).toString(),
                     token.getTokenType(),
                 ],
             )
-            log.info(response)
         } catch (error) {
             log.error(error)
-            throw Error("Unable to save token")
+            throw new DataStoreError("Unable to save token")
         }
     }
 
-    async loadStravaToken(username: string) {
+    async loadStravaToken(username: string): Promise<StravaToken> {
         const userId: number = await this.getUserId(username)
         try {
-            const response = await this.pg.query({
-                text: `
-                    SELECT user_id, access_token, refresh_token, expires_at, token_type
+            const response = await this.pg.query(
+                `
+                    SELECT access_token, refresh_token, expires_at, token_type
                     FROM tokens
                     WHERE user_id=$1::int
                 `,
-                values: [userId],
-                rowMode: "array",
-            })
-            const [, accessToken, refreshToken, expiresAt] = response.rows[0]
+                [userId],
+            )
+            if (response.rowCount != 1) {
+                throw new DataStoreError("Strava Token not found")
+            }
+
+            const row = response.rows[0]
+
             return new StravaToken(
-                accessToken,
-                refreshToken,
-                expiresAt,
-                TokenType.BEARER,
+                row.access_token,
+                row.refresh_token,
+                row.expires_at,
+                row.token_type,
             )
         } catch (err) {
             log.error(err)
-            throw Error("Unable to load strava token")
+            throw err
         }
     }
 }
