@@ -1,32 +1,18 @@
 import { Pool } from "pg"
 import StravaToken from "../token/stravaToken"
 import Logger from "../logger/Logger"
+import { DataStoreError } from "./Error"
+import UserDataStore from "./UserDataStore"
 
 const log = Logger.create()
 
-export class DataStoreError extends Error {}
-
 export default class TokenDataStore {
     private pg: Pool
+    private userDataStore: UserDataStore
 
-    constructor(pg: Pool) {
+    constructor(pg: Pool, userDataStore: UserDataStore) {
         this.pg = pg
-    }
-
-    async getUserId(username: string): Promise<number> {
-        try {
-            const response = await this.pg.query(
-                "SELECT user_id FROM users WHERE username = $1::text;",
-                [username],
-            )
-            if (response.rowCount != 1) {
-                throw new DataStoreError("UserId not found")
-            }
-            return Number(response.rows[0]["user_id"])
-        } catch (error) {
-            log.error(error)
-            throw error
-        }
+        this.userDataStore = userDataStore
     }
 
     async hasToken(username: string) {
@@ -45,7 +31,7 @@ export default class TokenDataStore {
     }
 
     async saveStravaToken(username: string, token: StravaToken) {
-        const userId = await this.getUserId(username)
+        const userId = await this.userDataStore.getUserId(username)
         try {
             await this.pg.query(
                 `
@@ -67,7 +53,7 @@ export default class TokenDataStore {
     }
 
     async loadStravaToken(username: string): Promise<StravaToken> {
-        const userId: number = await this.getUserId(username)
+        const userId: number = await this.userDataStore.getUserId(username)
         try {
             const response = await this.pg.query(
                 `
