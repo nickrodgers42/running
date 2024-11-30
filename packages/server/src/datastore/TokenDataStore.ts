@@ -22,7 +22,8 @@ export default class TokenDataStore {
         } catch (err) {
             if (
                 err instanceof DataStoreError &&
-                (err as DataStoreError).message == "UserId not found"
+                ((err as DataStoreError).message.includes("UserId not found") ||
+                 (err as DataStoreError).message.includes("Strava Token not found"))
             ) {
                 return false
             }
@@ -36,7 +37,7 @@ export default class TokenDataStore {
             await this.pg.query(
                 `
                     INSERT INTO tokens(user_id, access_token, refresh_token, expires_at, token_type)
-                    VALUES($1::int, to_timestamp($2), $3, $4, $5);
+                    VALUES($1::int, $2, $3, to_timestamp($4), $5);
                 `,
                 [
                     userId.toString(),
