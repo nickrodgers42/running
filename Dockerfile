@@ -1,13 +1,13 @@
-FROM postgres as db
+FROM postgres AS db
 
 COPY packages/database/sql/schema.sql /docker-entrypoint-initdb.d/
 
 
-FROM gradle:8.6.0-jdk17-alpine AS java-base
+FROM gradle:8.11.1-jdk17 AS java-base
 
 FROM java-base AS model
 
-workdir /model
+WORKDIR /model
 
 COPY ./packages/model .
 RUN gradle build
@@ -15,11 +15,10 @@ RUN gradle build
 
 FROM java-base AS strava
 
-RUN apk update \
- && apk add --no-cache jq \
- && rm -rf /var/cache/apk/*
+RUN apt update \
+ && apt install -y jq
 
-workdir /strava
+WORKDIR /strava
 
 COPY ./packages/strava .
 
@@ -30,7 +29,7 @@ FROM node:18-alpine AS base
 
 RUN yarn set version stable
 
-workdir /running
+WORKDIR /running
 COPY --from=model /model ./packages/model
 COPY ./node_modules .
 COPY package.json .
