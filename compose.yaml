@@ -2,6 +2,7 @@ name: running-app
 
 volumes:
   database:
+  pgadmin:
 
 services:
   database:
@@ -19,6 +20,8 @@ services:
     env_file: .env
     ports:
       - 5050:80
+    volumes:
+      - pgadmin:/var/lib/pgadmin
   website:
     build:
       target: website
