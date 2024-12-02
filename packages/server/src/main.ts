@@ -6,16 +6,14 @@ import SmithyServer from "./server/server"
 import { SERVER_PORT } from "./constants"
 import { Pool } from "pg"
 import TokenDataStore from "./datastore/TokenDataStore"
-import { EnvLoader } from "./envLoader"
 import UserDataStore from "./datastore/UserDataStore"
-
-new EnvLoader().load()
+import { EnvironmentVariables, getOrThrow } from "./environmentVariables"
 
 const pg = new Pool({
-    user: process.env.POSTGRES_USER,
-    password: process.env.POSTGRES_PASSWORD,
-    host: process.env.POSTGRES_HOST,
-    port: Number(process.env.POSTGRES_PORT),
+    user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
+    password: getOrThrow(process.env, EnvironmentVariables.POSTGRES_PASSWORD),
+    host: getOrThrow(process.env, EnvironmentVariables.POSTGRES_HOST),
+    port: Number(getOrThrow(process.env, EnvironmentVariables.POSTGRES_PORT))
 })
 
 const userDataStore = new UserDataStore(pg)

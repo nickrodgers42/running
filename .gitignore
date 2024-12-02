@@ -14,7 +14,7 @@
 **/build/
 **/.gradle/
 **/.smithy.lsp.log
-**/.env
+**/.env*
 node_modules/*
 **/node_modules/*
 
