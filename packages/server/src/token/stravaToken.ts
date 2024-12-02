@@ -19,7 +19,8 @@ export enum GrantType {
 interface StravaAuthParams {
     client_id: string
     client_secret: string
-    code: string
+    code?: string
+    refresh_token?: string
     grant_type: GrantType
 }
 
@@ -108,7 +109,7 @@ export default class StravaToken {
         const queryParams: StravaAuthParams = {
             client_id: CLIENT_ID.toString(),
             client_secret: process.env.CLIENT_SECRET,
-            code: token.getRefreshToken(),
+            refresh_token: token.getRefreshToken(),
             grant_type: GrantType.REFRESH_TOKEN,
         }
         try {

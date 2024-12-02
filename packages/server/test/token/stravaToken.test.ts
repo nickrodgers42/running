@@ -83,7 +83,7 @@ describe("StravaToken", () => {
         expect(mockedAxios.post).toHaveBeenCalledWith(
             STRAVA_AUTH_ENDPOINT.toString(),
             expect.objectContaining({
-                code: oldRefreshToken,
+                refresh_token: oldRefreshToken,
                 grant_type: GrantType.REFRESH_TOKEN,
                 client_id: CLIENT_ID.toString(),
                 client_secret: FAKE_CLIENT_SECRET,
@@ -108,7 +108,7 @@ describe("StravaToken", () => {
         expect(mockedAxios.post).toHaveBeenCalledWith(
             STRAVA_AUTH_ENDPOINT.toString(),
             expect.objectContaining({
-                code: oldRefreshToken,
+                refresh_token: oldRefreshToken,
                 grant_type: GrantType.REFRESH_TOKEN,
                 client_id: CLIENT_ID.toString(),
                 client_secret: FAKE_CLIENT_SECRET,

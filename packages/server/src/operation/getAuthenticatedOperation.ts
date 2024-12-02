@@ -1,7 +1,17 @@
 import { GetAuthenticatedInput, GetAuthenticatedOutput } from "@running/server"
-import { CLIENT_ID, SERVER_PORT, WEBSITE_PORT } from "../constants"
+import { CLIENT_ID, SERVER_PORT } from "../constants"
 import { OperationContext, OperationHandler } from "./operationHandler"
 import TokenDataStore from "../datastore/TokenDataStore"
+
+enum StravaScope {
+    READ = 'read',
+    READ_ALL = 'read_all',
+    PROFILE_READ_ALL = 'profile:read_all',
+    PROFILE_WRITE = 'profile:write',
+    ACTIVITY_READ = 'activity:read',
+    ACTIVITY_READ_ALL = 'activity:read_all',
+    ACTIVITY_WRITE = 'activity:write',
+}
 
 export default class GetAuthenticatedOperation
     implements
@@ -25,14 +35,6 @@ export default class GetAuthenticatedOperation
         if (input.username == undefined) {
             throw Error("No username found")
         }
-        const hasToken = await this.tokenDataStore.hasToken(input.username)
-        if (hasToken) {
-            return {
-                isAuthenticated: true,
-                // this should be the web port not the server port
-                authUrl: `http://localhost:${WEBSITE_PORT}`,
-            }
-        }
 
         const redirectUri = new URL(
             `http://localhost:${SERVER_PORT}/exchangeToken/${input.username}`,
@@ -42,7 +44,11 @@ export default class GetAuthenticatedOperation
             response_type: "code",
             redirect_uri: redirectUri.toString(),
             approval_prompt: "force",
-            scope: "read_all",
+            scope: [
+                StravaScope.READ_ALL,
+                StravaScope.PROFILE_READ_ALL,
+                StravaScope.ACTIVITY_READ_ALL
+            ].join(',')
         }
 
         const search = Object.entries(searchParams)
