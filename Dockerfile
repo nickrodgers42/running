@@ -1,6 +1,6 @@
 FROM postgres AS db
 
-COPY packages/database/sql/schema.sql /docker-entrypoint-initdb.d/
+COPY packages/database/sql/ /docker-entrypoint-initdb.d/
 
 
 FROM gradle:8.11.1-jdk17 AS java-base
