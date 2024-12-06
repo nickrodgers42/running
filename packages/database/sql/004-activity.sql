@@ -39,7 +39,7 @@ CREATE TABLE segment_efforts (
 CREATE TABLE segments (
     id BIGINT PRIMARY KEY,
     name TEXT,
-    activity_type TEXT,
+    activity_type activity_type,
     distance NUMERIC,
     average_grade NUMERIC,
     maximum_grade NUMERIC,
