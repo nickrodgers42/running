@@ -2,44 +2,34 @@ import { Pool } from "pg"
 import StravaToken from "../token/stravaToken"
 import Logger from "../logger/Logger"
 import { DataStoreError } from "./Error"
-import UserDataStore from "./UserDataStore"
 
 const log = Logger.create()
 
 export default class TokenDataStore {
     private pg: Pool
-    private userDataStore: UserDataStore
 
-    constructor(pg: Pool, userDataStore: UserDataStore) {
+    constructor(pg: Pool) {
         this.pg = pg
-        this.userDataStore = userDataStore
     }
 
-    async hasToken(username: string) {
+    async hasToken(userId: number) {
         try {
-            await this.loadStravaToken(username)
+            await this.loadStravaToken(userId)
             return true
         } catch (err) {
-            if (
-                err instanceof DataStoreError &&
-                (
-                    (err as DataStoreError).message.includes("UserId not found") ||
-                    (err as DataStoreError).message.includes("Strava Token not found")
-                )
-            ) {
+            if (err instanceof DataStoreError && (err as DataStoreError).message.includes("not found")) {
                 return false
             }
             throw err
         }
     }
 
-    async saveStravaToken(username: string, token: StravaToken) {
-        const userId = await this.userDataStore.getUserId(username)
+    async saveStravaToken(userId: number, token: StravaToken) {
         try {
             await this.pg.query(
                 `
                     INSERT INTO tokens(user_id, access_token, refresh_token, expires_at, token_type)
-                    VALUES($1::int, $2, $3, to_timestamp($4), $5)
+                    VALUES($1, $2, $3, to_timestamp($4), $5)
                     ON CONFLICT (user_id)
                     DO UPDATE SET access_token = $2, refresh_token = $3, expires_at = to_timestamp($4), token_type = $5;
                 `,
@@ -57,8 +47,7 @@ export default class TokenDataStore {
         }
     }
 
-    async loadStravaToken(username: string): Promise<StravaToken> {
-        const userId: number = await this.userDataStore.getUserId(username)
+    async loadStravaToken(userId: number): Promise<StravaToken> {
         try {
             const response = await this.pg.query(
                 `

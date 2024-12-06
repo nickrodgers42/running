@@ -1,7 +1,6 @@
 import { GetAuthenticatedInput, GetAuthenticatedOutput } from "@running/server"
 import { CLIENT_ID, SERVER_PORT } from "../constants"
 import { OperationContext, OperationHandler } from "./operationHandler"
-import TokenDataStore from "../datastore/TokenDataStore"
 
 enum StravaScope {
     READ = 'read',
@@ -20,11 +19,8 @@ export default class GetAuthenticatedOperation
         GetAuthenticatedOutput,
         OperationContext
     > {
-    private tokenDataStore: TokenDataStore
 
-    constructor(tokenDataStore: TokenDataStore) {
-        this.tokenDataStore = tokenDataStore
-    }
+    constructor() { }
 
     async handle(
         input: GetAuthenticatedInput,

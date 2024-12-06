@@ -17,9 +17,9 @@ const pg = new Pool({
 })
 
 const userDataStore = new UserDataStore(pg)
-const tokenDataStore = new TokenDataStore(pg, userDataStore)
-const getAuthenticatedOperation = new GetAuthenticatedOperation(tokenDataStore)
-const exchangeTokenOperation = new ExchangeTokenOperation(tokenDataStore)
+const tokenDataStore = new TokenDataStore(pg)
+const getAuthenticatedOperation = new GetAuthenticatedOperation()
+const exchangeTokenOperation = new ExchangeTokenOperation(userDataStore, tokenDataStore)
 
 const runningServiceHander = getRunningServiceHandler({
     GetAuthenticated: getAuthenticatedOperation.handle.bind(

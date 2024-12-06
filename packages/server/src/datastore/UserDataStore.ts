@@ -14,13 +14,13 @@ export default class UserDataStore {
     async getUserId(username: string): Promise<number> {
         try {
             const response = await this.pg.query(
-                "SELECT user_id FROM users WHERE username = $1::text;",
+                "SELECT id FROM users WHERE username = $1::text;",
                 [username],
             )
             if (response.rowCount != 1) {
                 throw new DataStoreError("UserId not found")
             }
-            return Number(response.rows[0]["user_id"])
+            return Number(response.rows[0]["id"])
         } catch (error) {
             log.error(error)
             throw error

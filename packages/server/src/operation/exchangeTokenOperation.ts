@@ -3,6 +3,7 @@ import { OperationContext, OperationHandler } from "./operationHandler"
 import pino from "pino"
 import TokenDataStore from "../datastore/TokenDataStore"
 import StravaToken from "../token/stravaToken"
+import UserDataStore from "../datastore/UserDataStore"
 
 const log = pino()
 
@@ -14,9 +15,11 @@ export default class ExchangeTokenOperation
             OperationContext
         >
 {
+    private userDataStore: UserDataStore
     private tokenDataStore: TokenDataStore
 
-    constructor(tokenDataStore: TokenDataStore) {
+    constructor(userDataStore: UserDataStore, tokenDataStore: TokenDataStore) {
+        this.userDataStore = userDataStore
         this.tokenDataStore = tokenDataStore
     }
 
@@ -32,7 +35,8 @@ export default class ExchangeTokenOperation
             const stravaToken: StravaToken = await StravaToken.fetchToken(
                 input.code,
             )
-            this.tokenDataStore.saveStravaToken(input.username, stravaToken)
+            const userId: number = await this.userDataStore.getUserId(input.username)
+            await this.tokenDataStore.saveStravaToken(userId, stravaToken)
         } catch (err) {
             log.error(err)
             redirectUri.search = "Error=error"
