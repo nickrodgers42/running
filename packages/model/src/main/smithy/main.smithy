@@ -12,40 +12,12 @@ use aws.api#service
 service Running {
     version: "2023-08-13"
     operations: [
-        GetAuthenticated
         IsAuthenticated
         Authenticate
         ExchangeToken
+        GetAthlete
         Ping
     ]
-}
-
-@readonly
-@http(method: "GET", "uri": "/stravaAuthenticated/{username}", code: 200)
-operation GetAuthenticated {
-    input: GetAuthenticatedInput
-    output: GetAuthenticatedOutput
-    errors: [ GetAuthenticatedError, ValidationException ]
-}
-
-structure GetAuthenticatedInput {
-    @required
-    @httpLabel
-    username: String
-}
-
-structure GetAuthenticatedOutput {
-    @required
-    isAuthenticated: Boolean
-
-    authUrl: String
-}
-
-@error("server")
-@httpError(500)
-structure GetAuthenticatedError {
-    @required
-    message: String
 }
 
 @readonly
