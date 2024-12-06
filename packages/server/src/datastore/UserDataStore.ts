@@ -14,7 +14,7 @@ export default class UserDataStore {
     async getUserId(username: string): Promise<number> {
         try {
             const response = await this.pg.query(
-                "SELECT id FROM users WHERE username = $1::text;",
+                "SELECT id FROM users WHERE username = $1;",
                 [username],
             )
             if (response.rowCount != 1) {

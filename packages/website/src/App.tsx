@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react"
 import "./App.css"
 import {
-    GetAuthenticatedCommand,
+    AuthenticateCommand,
+    IsAuthenticatedCommand,
     PingCommand,
     RunningClient,
 } from "@running/client"
@@ -14,7 +15,6 @@ const client = new RunningClient({
 
 function App() {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false)
-    const [authenticateUrl, setAuthenticateUrl] = useState<string>("")
 
     useEffect(() => {
         if (!isAuthenticated) {
@@ -29,7 +29,7 @@ function App() {
 
     async function checkAuthenticated() {
         const response = await client.send(
-            new GetAuthenticatedCommand({
+            new IsAuthenticatedCommand({
                 username: "localuser",
             }),
         )
@@ -37,26 +37,31 @@ function App() {
             return
         }
         setIsAuthenticated(response.isAuthenticated)
-        if (
-            response.isAuthenticated === false &&
-            response.authUrl !== undefined
-        ) {
-            setAuthenticateUrl(response.authUrl)
+    }
+
+    async function authenticate() {
+        const response = await client.send(
+            new AuthenticateCommand({
+                username: "localuser"
+            })
+        )
+        if (response.$metadata.httpStatusCode === 200 && response.authUrl) {
+            window.location.href = response.authUrl
         }
     }
+
 
     return (
         <NextUIProvider>
             <div className="App">
                 <h1>Hello World</h1>
                 <p>You are {isAuthenticated ? "" : "not "}authenticated</p>
-                <button onClick={ping}>Click to ping</button>
+                <button className="button" onClick={ping}>Click to ping the server</button>
                 <button
-                    onClick={() => {
-                        window.location.href = authenticateUrl
-                    }}
+                    className="button"
+                    onClick={authenticate}
                 >
-                    Click to authenticate
+                    Click to authenticate with Strava
                 </button>
             </div>
         </NextUIProvider>

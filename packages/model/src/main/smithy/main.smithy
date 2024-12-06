@@ -13,6 +13,8 @@ service Running {
     version: "2023-08-13"
     operations: [
         GetAuthenticated
+        IsAuthenticated
+        Authenticate
         ExchangeToken
         Ping
     ]
@@ -46,8 +48,50 @@ structure GetAuthenticatedError {
     message: String
 }
 
-structure AuthUrl {
-    url: String
+@readonly
+@http(method: "GET", "uri": "/isAuthenticated/{username}", code: 200)
+operation IsAuthenticated {
+    input: IsAuthenticatedInput
+    output: IsAuthenticatedOutput
+    errors: [ AuthenticationError, ValidationException ]
+}
+
+structure IsAuthenticatedInput {
+    @required
+    @httpLabel
+    username: String
+}
+
+structure IsAuthenticatedOutput {
+    @required
+    isAuthenticated: Boolean
+}
+
+@readonly
+@http(method: "GET", "uri": "/authenticate/{username}", code: 200)
+operation Authenticate {
+    input: AuthenticationInput
+    output: AuthenticationOutput
+    errors: [ AuthenticationError, ValidationException ]
+}
+
+structure AuthenticationInput {
+    @required
+    @httpLabel
+    username: String
+}
+
+structure AuthenticationOutput {
+    @required
+    authUrl: String
+}
+
+
+@error("server")
+@httpError(500)
+structure AuthenticationError {
+    @required
+    message: String
 }
 
 @readonly

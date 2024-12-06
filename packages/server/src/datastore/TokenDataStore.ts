@@ -1,4 +1,4 @@
-import { Pool } from "pg"
+import { Pool, QueryConfigValues } from "pg"
 import StravaToken from "../token/stravaToken"
 import Logger from "../logger/Logger"
 import { DataStoreError } from "./Error"
@@ -28,18 +28,22 @@ export default class TokenDataStore {
         try {
             await this.pg.query(
                 `
-                    INSERT INTO tokens(user_id, access_token, refresh_token, expires_at, token_type)
-                    VALUES($1, $2, $3, to_timestamp($4), $5)
+                    INSERT INTO tokens(
+                        user_id, access_token, refresh_token, expires_at,
+                        token_type)
+                    VALUES($1, $2, $3, $4, $5)
                     ON CONFLICT (user_id)
-                    DO UPDATE SET access_token = $2, refresh_token = $3, expires_at = to_timestamp($4), token_type = $5;
+                        DO UPDATE
+                            SET access_token = $2, refresh_token = $3,
+                                expires_at = $4, token_type = $5
                 `,
                 [
-                    userId.toString(),
+                    userId,
                     token.getAccessToken(),
                     token.getRefreshToken(),
-                    (token.getExpiresAt().getTime() / 1000).toString(),
+                    token.getExpiresAt(),
                     token.getTokenType(),
-                ],
+                ] as QueryConfigValues<(number & string & Date)[]>
             )
         } catch (error) {
             log.error(error)
@@ -53,7 +57,7 @@ export default class TokenDataStore {
                 `
                     SELECT access_token, refresh_token, expires_at, token_type
                     FROM tokens
-                    WHERE user_id=$1::int
+                    WHERE user_id = $1
                 `,
                 [userId],
             )

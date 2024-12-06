@@ -8,6 +8,8 @@ import { Pool } from "pg"
 import TokenDataStore from "./datastore/TokenDataStore"
 import UserDataStore from "./datastore/UserDataStore"
 import { EnvironmentVariables, getOrThrow } from "./environmentVariables"
+import AuthenticateOperation from "./operation/authenticateOperation"
+import IsAuthenticatedOperation from "./operation/isAuthenticatedOperation"
 
 const pg = new Pool({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
@@ -20,6 +22,8 @@ const userDataStore = new UserDataStore(pg)
 const tokenDataStore = new TokenDataStore(pg)
 const getAuthenticatedOperation = new GetAuthenticatedOperation()
 const exchangeTokenOperation = new ExchangeTokenOperation(userDataStore, tokenDataStore)
+const isAuthenticatedOperation = new IsAuthenticatedOperation(userDataStore, tokenDataStore)
+const authenticatOperation = new AuthenticateOperation()
 
 const runningServiceHander = getRunningServiceHandler({
     GetAuthenticated: getAuthenticatedOperation.handle.bind(
@@ -27,6 +31,8 @@ const runningServiceHander = getRunningServiceHandler({
     ),
     Ping: new PingOperation().handle,
     ExchangeToken: exchangeTokenOperation.handle.bind(exchangeTokenOperation),
+    Authenticate: authenticatOperation.handle,
+    IsAuthenticated: isAuthenticatedOperation.handle.bind(isAuthenticatedOperation)
 })
 
 new SmithyServer(runningServiceHander).listen(SERVER_PORT)
