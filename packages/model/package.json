@@ -2,6 +2,7 @@
   "name": "model",
   "packageManager": "yarn@4.1.1",
   "scripts": {
-    "build": "gradle build"
+    "build": "gradle build",
+    "clean": "rm -r build/"
   }
 }

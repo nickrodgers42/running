@@ -2,6 +2,7 @@ import { useEffect, useState } from "react"
 import "./App.css"
 import {
     AuthenticateCommand,
+    GetAthleteCommand,
     IsAuthenticatedCommand,
     PingCommand,
     RunningClient,
@@ -50,6 +51,14 @@ function App() {
         }
     }
 
+    async function getAthlete() {
+        const response = await client.send(
+            new GetAthleteCommand({
+                username: "localuser"
+            })
+        )
+        console.log(response)
+    }
 
     return (
         <NextUIProvider>
@@ -63,6 +72,7 @@ function App() {
                 >
                     Click to authenticate with Strava
                 </button>
+                <button className="button" onClick={getAthlete}>Get Athlete</button>
             </div>
         </NextUIProvider>
     )

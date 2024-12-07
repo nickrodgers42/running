@@ -9,6 +9,10 @@ import UserDataStore from "./datastore/UserDataStore"
 import { EnvironmentVariables, getOrThrow } from "./environmentVariables"
 import AuthenticateOperation from "./operation/authenticateOperation"
 import IsAuthenticatedOperation from "./operation/isAuthenticatedOperation"
+import GetAthleteOperation from "./operation/getAthleteOperation"
+import AthleteDataStore from "./datastore/AthleteDataStore"
+import applyCaseMiddleware from "axios-case-converter"
+import axios from "axios"
 
 const pg = new Pool({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
@@ -19,15 +23,18 @@ const pg = new Pool({
 
 const userDataStore = new UserDataStore(pg)
 const tokenDataStore = new TokenDataStore(pg)
+const athleteDataStore = new AthleteDataStore(pg, applyCaseMiddleware(axios.create()))
 const exchangeTokenOperation = new ExchangeTokenOperation(userDataStore, tokenDataStore)
 const isAuthenticatedOperation = new IsAuthenticatedOperation(userDataStore, tokenDataStore)
+const getAthleteOperation = new GetAthleteOperation(userDataStore, tokenDataStore, athleteDataStore)
 const authenticatOperation = new AuthenticateOperation()
 
 const runningServiceHander = getRunningServiceHandler({
     Ping: new PingOperation().handle,
     ExchangeToken: exchangeTokenOperation.handle.bind(exchangeTokenOperation),
     Authenticate: authenticatOperation.handle,
-    IsAuthenticated: isAuthenticatedOperation.handle.bind(isAuthenticatedOperation)
+    IsAuthenticated: isAuthenticatedOperation.handle.bind(isAuthenticatedOperation),
+    GetAthlete: getAthleteOperation.handle.bind(getAthleteOperation)
 })
 
 new SmithyServer(runningServiceHander).listen(SERVER_PORT)

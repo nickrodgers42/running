@@ -10,6 +10,7 @@
     "build:server-lib": "yarn workspace @running/server build",
     "build:client-lib": "yarn workspace @running/client build",
     "build:strava": "yarn workspace strava build",
+    "clean:model": "yarn workspace model clean",
     "start:pgadmin": "./scripts/start-pgadmin.sh",
     "start:db": "./scripts/start-db.sh",
     "start:website": "yarn workspace website start",
