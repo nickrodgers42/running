@@ -13,19 +13,20 @@ COPY ./packages/model .
 RUN gradle build
 
 
-FROM java-base AS strava
+FROM node:23-alpine AS strava
 
-RUN apt update \
- && apt install -y jq
+RUN apk update \
+ && apk add jq
 
 WORKDIR /strava
 
 COPY ./packages/strava .
 
 RUN ./build.sh
+RUN corepack enable && corepack prepare yarn@4.1.1
+RUN yarn add axios@1.7.9
 
-
-FROM node:18-alpine AS base
+FROM node:23-alpine AS base
 
 RUN yarn set version stable
 
