@@ -13,7 +13,7 @@
     "clean:model": "yarn workspace model clean",
     "start:pgadmin": "./scripts/start-pgadmin.sh",
     "start:db": "./scripts/start-db.sh",
-    "start:website": "yarn workspace website start",
+    "start:website": "yarn workspace website dev",
     "start:server": "yarn workspace server start:dev",
     "start": "./scripts/start.sh",
     "lsp": "yarn dlx @yarnpkg/sdks base"

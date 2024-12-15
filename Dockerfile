@@ -22,9 +22,8 @@ WORKDIR /strava
 
 COPY ./packages/strava .
 
-RUN ./build.sh
 RUN corepack enable && corepack prepare yarn@4.1.1
-RUN yarn add axios@1.7.9
+RUN ./build.sh
 
 FROM node:23-alpine AS base
 
