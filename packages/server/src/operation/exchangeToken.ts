@@ -7,7 +7,7 @@ import UserDataStore from "../datastore/UserDataStore"
 
 const log = pino()
 
-export default class ExchangeTokenOperation
+export class ExchangeToken
     implements
         OperationHandler<
             ExchangeTokenInput,

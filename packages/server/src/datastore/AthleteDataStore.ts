@@ -77,6 +77,50 @@ export default class AthleteDataStore {
         return (await athletesApi.getLoggedInAthlete()).data
     }
 
+    async getAthleteFromId(athlete_id: number): Promise<Athlete> {
+        const response = await this.pg.query(
+            `
+                SELECT
+                    id, user_id, resource_state, firstname, lastname, profile_medium,
+                    profile, city, state, country, sex, premium, summit, created_at,
+                    updated_at, follower_count, friend_count, measurement_preference,
+                    ftp, weight
+                FROM athletes WHERE id = $1
+                LIMIT 1
+            `,
+            [athlete_id]
+        )
+        if (response.rowCount != 1 || response.rows[0] == undefined) {
+            throw Error("Athlete not found")
+        }
+
+        const athleteData = response.rows[0]
+
+        return {
+            id: Number(athleteData['id']),
+            user_id: Number(athleteData['user_id']),
+            resource_state: athleteData['resource_state'],
+            firstname: athleteData['firstname'],
+            lastname: athleteData['lastname'],
+            profile_medium: athleteData['profile_medium'],
+            profile: athleteData['profile'],
+            city: athleteData['city'],
+            state: athleteData['state'],
+            country: athleteData['country'],
+            sex: athleteData['sex'],
+            premium: Boolean(athleteData['premium']),
+            summit: Boolean(athleteData['summit']),
+            created_at: new Date(athleteData['created_at']),
+            updated_at: new Date(athleteData['updated_at']),
+            follower_count: Number(athleteData['follower_count']),
+            friend_count: Number(athleteData['friend_count']),
+            measurement_preference: athleteData['measurement_preference'],
+            ftp: Number(athleteData['ftp']),
+            weight: Number(athleteData['weight'])
+        }
+
+    }
+
     async getAthlete(userId: number, token: StravaToken): Promise<Athlete> {
         if (!(await this.athleteExists(userId))) {
             const athlete = await this.retrieveAthlete(token)

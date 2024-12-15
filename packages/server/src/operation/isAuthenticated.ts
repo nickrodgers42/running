@@ -3,7 +3,7 @@ import { OperationContext, OperationHandler } from "./operationHandler";
 import TokenDataStore from "../datastore/TokenDataStore";
 import UserDataStore from "../datastore/UserDataStore";
 
-export default class IsAuthenticatedOperation implements OperationHandler<
+export class IsAuthenticated implements OperationHandler<
     IsAuthenticatedInput,
     IsAuthenticatedOutput,
     OperationContext

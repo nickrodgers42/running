@@ -1,11 +1,15 @@
-import { GetAthleteInput, GetAthleteOutput } from "@running/server";
+import { GetAthleteFromUsernameInput, GetAthleteFromUsernameOutput } from "@running/server";
 import { OperationContext, OperationHandler } from "./operationHandler";
-import UserDataStore from "../datastore/UserDataStore";
-import TokenDataStore from "../datastore/TokenDataStore";
 import AthleteDataStore from "../datastore/AthleteDataStore";
+import TokenDataStore from "../datastore/TokenDataStore";
+import UserDataStore from "../datastore/UserDataStore";
 import StravaToken from "../token/stravaToken";
 
-export default class GetAthleteOperation implements OperationHandler<GetAthleteInput, GetAthleteOutput, OperationContext> {
+export class GetAthleteFromUsername implements OperationHandler<
+    GetAthleteFromUsernameInput,
+    GetAthleteFromUsernameOutput,
+    OperationContext
+> {
     private userDataStore: UserDataStore
     private tokenDataaStore: TokenDataStore
     private athleteDataStore: AthleteDataStore
@@ -17,9 +21,9 @@ export default class GetAthleteOperation implements OperationHandler<GetAthleteI
     }
 
     async handle(
-        input: GetAthleteInput,
+        input: GetAthleteFromUsernameInput,
         _context: OperationContext
-    ): Promise<GetAthleteOutput> {
+    ): Promise<GetAthleteFromUsernameOutput> {
         if (!input.username) {
             throw Error("Username not found")
         }
@@ -29,8 +33,7 @@ export default class GetAthleteOperation implements OperationHandler<GetAthleteI
             token = await StravaToken.refresh(token)
             await this.tokenDataaStore.saveStravaToken(userId, token)
         }
-        return {
-            athlete: await this.athleteDataStore.getAthlete(userId, token)
-        }
+
+        return await this.athleteDataStore.getAthlete(userId, token)
     }
 }

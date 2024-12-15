@@ -12,10 +12,10 @@ enum StravaScope {
     ACTIVITY_WRITE = 'activity:write',
 }
 
-export default class AuthenticateOperation implements OperationHandler<
-AuthenticationInput,
-AuthenticationOutput,
-OperationContext
+export class Authenticate implements OperationHandler<
+    AuthenticationInput,
+    AuthenticationOutput,
+    OperationContext
 > {
     async handle(
         input: AuthenticationInput,
