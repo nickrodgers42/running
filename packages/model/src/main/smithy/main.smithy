@@ -16,8 +16,8 @@ service Running {
     ]
     resources: [
         Authentication
-        Athlete
-        Activity
+        Athletes
+        Activities
     ]
 }
 

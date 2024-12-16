@@ -140,64 +140,69 @@ list SplitList {
     member: Split
 }
 
-resource Activity {
+structure Activity {
+    id: String
+    user_id: String
+    external_id: String
+    upload_id: String
+    athlete: String
+    name: String
+    distance: Double
+    moving_time: Integer
+    elapsed_time: Integer
+    total_elevation_gain: Double
+    elev_high: Double
+    elev_low: Double
+    type: ActivityType
+    sport_type: Sport
+    start_date: Timestamp
+    start_date_local: Timestamp
+    timezone: String
+    start_latlng: Point
+    end_latlng: Point
+    achievement_count: Integer
+    kudos_count: Integer
+    comment_count: Integer
+    athlete_count: Integer
+    photo_count: Integer
+    total_photo_count: Integer
+    map: PolylineMap
+    trainer: Boolean
+    commute: Boolean
+    manual: Boolean
+    private: Boolean
+    flagged: Boolean
+    workout_type: Integer
+    upload_id_str: String
+    average_speed: Double
+    max_speed: Double
+    has_kudoed: Boolean
+    hide_from_home: Boolean
+    gear_id: String
+    kilojoules: Double
+    average_watts: Double
+    device_watts: Boolean
+    max_watts: Integer
+    weighted_average_watts: Integer
+    description: String
+    photos: PhotosSummary
+    gear: String
+    calories: Double
+    segment_efforts: StringList
+    device_name: String
+    embed_token: String
+    splits_metric: SplitList
+    splits_standard: SplitList
+    laps: StringList
+    best_efforts: StringList
+}
+
+resource Activities {
     identifiers: {
         id: ActivityId
     }
     properties: {
-        user_id: String
-        external_id: String
-        upload_id: String
-        athlete: String
-        name: String
-        distance: Double
-        moving_time: Integer
-        elapsed_time: Integer
-        total_elevation_gain: Double
-        elev_high: Double
-        elev_low: Double
-        type: ActivityType
-        sport_type: Sport
-        start_date: Timestamp
-        start_date_local: Timestamp
-        timezone: String
-        start_latlng: Point
-        end_latlng: Point
-        achievement_count: Integer
-        kudos_count: Integer
-        comment_count: Integer
-        athlete_count: Integer
-        photo_count: Integer
-        total_photo_count: Integer
-        map: PolylineMap
-        trainer: Boolean
-        commute: Boolean
-        manual: Boolean
-        private: Boolean
-        flagged: Boolean
-        workout_type: Integer
-        upload_id_str: String
-        average_speed: Double
-        max_speed: Double
-        has_kudoed: Boolean
-        hide_from_home: Boolean
-        gear_id: String
-        kilojoules: Double
-        average_watts: Double
-        device_watts: Boolean
-        max_watts: Integer
-        weighted_average_watts: Integer
-        description: String
-        photos: PhotosSummary
-        gear: String
-        calories: Double
-        segment_efforts: StringList
-        device_name: String
-        embed_token: String
-        splits_metric: SplitList
-        splits_standard: SplitList
-        laps: StringList
-        best_efforts: StringList
+        activity: Activity
     }
     read: GetActivity
     list: ListActivities
@@ -241,12 +246,7 @@ structure ActivityError {
 }
 
 list ActivityList {
-    member: ActivityListMember
-}
-
-structure ActivityListMember for Activity {
-    $id
-    $name
+    member: Activity
 }
 
 @readonly
@@ -257,68 +257,15 @@ operation GetActivity {
     errors: [ ActivityError ValidationException ]
 }
 
-structure GetActivityInput for Activity {
+structure GetActivityInput for Activities {
     @required
     @httpQuery("id")
     $id
 }
 
-structure GetActivityOutput for Activity {
+structure GetActivityOutput for Activities {
     @required
-    $id
-    $user_id
-    $external_id
-    $upload_id
-    $athlete
-    $name
-    $distance
-    $moving_time
-    $elapsed_time
-    $total_elevation_gain
-    $elev_high
-    $elev_low
-    $type
-    $sport_type
-    $start_date
-    $start_date_local
-    $timezone
-    $start_latlng
-    $end_latlng
-    $achievement_count
-    $kudos_count
-    $comment_count
-    $athlete_count
-    $photo_count
-    $total_photo_count
-    $map
-    $trainer
-    $commute
-    $manual
-    $private
-    $flagged
-    $workout_type
-    $upload_id_str
-    $average_speed
-    $max_speed
-    $has_kudoed
-    $hide_from_home
-    $gear_id
-    $kilojoules
-    $average_watts
-    $device_watts
-    $max_watts
-    $weighted_average_watts
-    $description
-    $photos
-    $gear
-    $calories
-    $segment_efforts
-    $device_name
-    $embed_token
-    $splits_metric
-    $splits_standard
-    $laps
-    $best_efforts
+    activity: Activity
 }
 
 @readonly
