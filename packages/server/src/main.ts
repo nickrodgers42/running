@@ -1,4 +1,4 @@
-import { getRunningServiceHandler } from "@running/server"
+import { getRunningServiceHandler, RunningServiceOperations } from "@running/server"
 import SmithyServer from "./server/server"
 import { SERVER_PORT } from "./constants"
 import { Pool } from "pg"
@@ -16,9 +16,11 @@ import {
     GetAthleteFromUsername,
     IsAuthenticated,
     ListActivities,
+    OperationHandler,
     Ping,
     SyncActivities,
 } from "./operation"
+import { Operation } from "@aws-smithy/server-common"
 
 const pg = new Pool({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
@@ -34,31 +36,33 @@ const athleteDataStore = new AthleteDataStore(
     applyCaseMiddleware(axios.create()),
 )
 
-const exchangeToken = new ExchangeToken(userDataStore, tokenDataStore)
-const isAuthenticated = new IsAuthenticated(userDataStore, tokenDataStore)
-const getAthlete = new GetAthlete(athleteDataStore)
-const authenticate = new Authenticate()
-const getAthleteFromUsername = new GetAthleteFromUsername(
-    userDataStore,
-    tokenDataStore,
-    athleteDataStore,
-)
-const listActivities = new ListActivities()
-const syncActivities = new SyncActivities()
-const getActivity = new GetActivity()
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+type OperationMap = { [key in RunningServiceOperations]: OperationHandler<any, any, any> }
+const operations: OperationMap = {
+    Ping: new Ping(),
+    ExchangeToken: new ExchangeToken(userDataStore, tokenDataStore),
+    Authenticate: new Authenticate(),
+    IsAuthenticated: new IsAuthenticated(userDataStore, tokenDataStore),
+    GetAthlete: new GetAthlete(athleteDataStore),
+    GetAthleteFromUsername: new GetAthleteFromUsername(userDataStore, tokenDataStore, athleteDataStore),
+    GetActivity: new GetActivity(),
+    ListActivities: new ListActivities(),
+    SyncActivities: new SyncActivities(),
+}
 
-const runningServiceHander = getRunningServiceHandler({
-    Ping: new Ping().handle,
-    ExchangeToken: exchangeToken.handle.bind(exchangeToken),
-    Authenticate: authenticate.handle,
-    IsAuthenticated: isAuthenticated.handle.bind(isAuthenticated),
-    GetAthlete: getAthlete.handle.bind(getAthlete),
-    GetAthleteFromUsername: getAthleteFromUsername.handle.bind(
-        getAthleteFromUsername,
-    ),
-    ListActivities: listActivities.handle.bind(listActivities),
-    SyncActivities: syncActivities.handle.bind(syncActivities),
-    GetActivity: getActivity.handle.bind(getActivity),
-})
+
+/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
+type HandlerMap = { [key in RunningServiceOperations]: Operation<any, any, any> }
+function bindHandlers(): HandlerMap {
+    const serviceHandlers: Partial<HandlerMap> = {}
+    Object.keys(operations).forEach((key) => {
+        const operationKey = key as RunningServiceOperations
+        const operationHandler = operations[operationKey]
+        serviceHandlers[operationKey] = operationHandler.handle.bind(operationHandler)
+    })
+    return serviceHandlers as HandlerMap
+}
+
+const runningServiceHander = getRunningServiceHandler(bindHandlers())
 
 new SmithyServer(runningServiceHander).listen(SERVER_PORT)

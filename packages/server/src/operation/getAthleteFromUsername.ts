@@ -34,6 +34,8 @@ export class GetAthleteFromUsername implements OperationHandler<
             await this.tokenDataaStore.saveStravaToken(userId, token)
         }
 
-        return await this.athleteDataStore.getAthlete(userId, token)
+        return {
+            athlete: await this.athleteDataStore.getAthlete(userId, token)
+        }
     }
 }

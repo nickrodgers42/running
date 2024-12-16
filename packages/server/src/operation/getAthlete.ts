@@ -13,6 +13,8 @@ export class GetAthlete implements OperationHandler<GetAthleteInput, GetAthleteO
         input: GetAthleteInput,
         _context: OperationContext
     ): Promise<GetAthleteOutput> {
-        return await this.athleteDataStore.getAthleteFromId(Number(input.id))
+        return {
+            athlete: await this.athleteDataStore.getAthleteFromId(Number(input.id))
+        }
     }
 }
