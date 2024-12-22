@@ -150,8 +150,8 @@ export default class AthleteDataStore {
         const athleteData = response.rows[0]
 
         return {
-            id: Number(athleteData['id']),
-            user_id: Number(athleteData['user_id']),
+            id: athleteData['id'],
+            user_id: athleteData['user_id'],
             resource_state: athleteData['resource_state'],
             firstname: athleteData['firstname'],
             lastname: athleteData['lastname'],

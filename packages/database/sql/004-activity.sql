@@ -1,6 +1,6 @@
 BEGIN;
 CREATE TABLE gear (
-    id BIGINT PRIMARY KEY,
+    id TEXT,
     resource_state INT,
     primary_gear BOOLEAN,
     name TEXT,
@@ -30,7 +30,7 @@ CREATE TABLE segment_efforts (
     device_watts BOOLEAN,
     average_heartrate NUMERIC,
     max_heartrate NUMERIC,
-    segment BIGINT[],
+    segment_id BIGINT,
     kom_rank INT,
     pr_rank INT,
     hidden BOOLEAN
@@ -53,7 +53,7 @@ CREATE TABLE segments (
     country TEXT,
     private BOOLEAN,
     athlete_pr_effort summary_pr_segment_effort,
-    athlete_segment_stats BIGINT REFERENCES segment_efforts(id),
+    athlete_segment_stats_id BIGINT,
     created_at TIMESTAMP,
     updated_at TIMESTAMP,
     total_elevation_gain NUMERIC,
@@ -90,7 +90,7 @@ CREATE TABLE activities (
     user_id SERIAL REFERENCES users(id),
     external_id TEXT,
     upload_id BIGINT,
-    athlete BIGINT REFERENCES athletes(id),
+    athlete meta_athlete,
     name TEXT,
     distance NUMERIC,
     moving_time INT,
@@ -131,15 +131,14 @@ CREATE TABLE activities (
     weighted_average_watts INT,
     description TEXT,
     photos photos_summary,
-    gear BIGINT REFERENCES gear(id),
     calories NUMERIC,
-    segment_efforts BIGINT[],
+    -- segment_efforts BIGINT[],
     device_name TEXT,
-    embed_token TEXT,
-    splits_metric split[],
-    splits_standard split[],
-    laps BIGINT[],
-    best_efforts BIGINT[]
+    embed_token TEXT
+    -- splits_metric split[],
+    -- splits_standard split[],
+    -- laps BIGINT[],
+    -- best_efforts BIGINT[]
 );
 
 COMMIT;

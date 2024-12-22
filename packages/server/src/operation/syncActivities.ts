@@ -12,6 +12,6 @@ export class SyncActivities implements OperationHandler<
         input: SyncActivitiesInput,
         _context: OperationContext
     ): Promise<SyncActivitiesOutput> {
-        return
+        return {}
     }
 }

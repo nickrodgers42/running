@@ -1,4 +1,4 @@
-import { GetActivityInput, GetActivityOutput  } from "@running/server";
+import { Activity, GetActivityInput, GetActivityOutput  } from "@running/server";
 import { OperationContext, OperationHandler } from "./operationHandler";
 
 export class GetActivity implements OperationHandler<
@@ -13,7 +13,7 @@ export class GetActivity implements OperationHandler<
         _context: OperationContext
     ): Promise<GetActivityOutput> {
         return {
-            id: 'asd'
+            activity: {}
         }
     }
 }
