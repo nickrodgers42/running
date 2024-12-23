@@ -7580,6 +7580,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"postgres@npm:^3.4.5":
+  version: 3.4.5
+  resolution: "postgres@npm:3.4.5"
+  checksum: 10c0/53415acea77e97bdc1eeb861048f34964e2236e4d4d42f408fc9b901e62bfcf7443a487ebfdad18b57b468c6e297bf8d22097106a200f62eb1262eb5a71355df
+  languageName: node
+  linkType: hard
+
 "prelude-ls@npm:^1.2.1":
   version: 1.2.1
   resolution: "prelude-ls@npm:1.2.1"
@@ -8116,6 +8123,7 @@ __metadata:
     pg: "npm:^8.11.3"
     pino: "npm:^8.19.0"
     pino-pretty: "npm:^10.3.1"
+    postgres: "npm:^3.4.5"
     strava: "workspace:^"
     ts-jest: "npm:^29.1.2"
     ts-node: "npm:^10.9.2"

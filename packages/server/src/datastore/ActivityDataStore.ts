@@ -1,7 +1,8 @@
 import { AxiosInstance } from "axios"
-import { DetailedActivity, DetailedGear, DetailedSegment, DetailedSegmentEffort, GearsApi, Lap, SegmentsApi, SummaryGear } from "strava"
+import { DetailedActivity, DetailedGear, DetailedSegment, DetailedSegmentEffort, GearsApi, Lap, SegmentsApi } from "strava"
 import StravaToken from "../token/stravaToken"
-import { Pool, PoolClient, QueryConfigValues } from "pg"
+import { Pool, QueryConfigValues } from "pg"
+import sql from "./database"
 
 type QueryConfig =  QueryConfigValues<(number & string & Date)[]>
 
@@ -43,43 +44,33 @@ export default class ActivityDataStore {
         this.axiosClient = axiosClient
     }
 
-    async saveGear(gear: DetailedGear, client?: PoolClient) {
-        let database = client
-        if (database == undefined) {
-            database = await this.pg.connect()
-        }
-        const values = [
-                gear.id,
-                gear.resourceState,
-                gear.primary,
-                gear.name,
-                gear.distance,
-                gear.brandName,
-                gear.modelName,
-                gear.frameType,
-                gear.description
-        ] as QueryConfig
-        await database.query(
-            `
-                INSERT INTO gear (
-                    id, resource_state, primary_gear, name, distance, brand_name,
-                    model_name, frame_type, description
-                )
-                VALUES (
-                    ${getValuesList(values)}
-                )
-            `,
-            values
-        )
+    async saveGear(gear: DetailedGear, sqlClient?: typeof sql) {
+        const db = sqlClient ?? sql
+        await db`
+            INSERT INTO gear(
+                id, resource_state, primary_gear, name, distance, brand_name,
+                model_name, frame_type, description
+            )
+            VALUES (
+                ${gear.id ?? null },
+                ${gear.resourceState ?? null},
+                ${gear.primary ?? null},
+                ${gear.name ?? null},
+                ${gear.distance ?? null},
+                ${gear.brandName ?? null},
+                ${gear.modelName ?? null},
+                ${gear.frameType ?? null},
+                ${gear.description ?? null}
+            )
+        `
     }
 
     async hasGear(gearId: string): Promise<boolean> {
-        const response = await this.pg.query(
-            `SELECT EXISTS (SELECT id FROM gear WHERE id = $1)`,
-            [gearId],
-        )
-        if (response.rowCount && response.rowCount > 0) {
-            return Boolean(response.rows[0].exists)
+        const response = await sql`
+            SELECT EXISTS (SELECT id FROM gear WHERE id = ${gearId})
+        `
+        if (response.length > 0) {
+            return Boolean(response[0].exists)
         }
         return false
     }
@@ -93,80 +84,76 @@ export default class ActivityDataStore {
     }
 
     async segmentExists(segmentId: number): Promise<boolean> {
-        const response = await this.pg.query(
-            `SELECT EXISTS (SELECT id FROM segments WHERE id = $1)`,
-            [segmentId]
-        )
-        if (response.rowCount && response.rowCount > 0) {
-            return Boolean(response.rows[0].exists)
+        const response = await sql`
+            SELECT EXISTS (SELECT id FROM segments WHERE id = ${segmentId})
+        `
+        if (response.length > 0) {
+            return Boolean(response[0].exists)
         }
         return false
     }
 
     async saveSegment(segment: DetailedSegment) {
-        const values = [
-                segment.id,
-                segment.name,
-                segment.activityType,
-                segment.distance,
-                segment.averageGrade,
-                segment.maximumGrade,
-                segment.elevationHigh,
-                segment.elevationLow,
-                segment.climbCategory,
-                segment.city,
-                segment.state,
-                segment.country,
-                segment._private,
-                segment.athletePrEffort?.prActivityId,
-                segment.athletePrEffort?.prElapsedTime,
-                segment.athletePrEffort?.prDate,
-                segment.athletePrEffort?.effortCount,
-                segment.athleteSegmentStats?.id,
-                segment.createdAt,
-                segment.updatedAt,
-                segment.totalElevationGain,
-                segment.map?.id,
-                segment.map?.polyline,
-                segment.map?.summaryPolyline,
-                segment.effortCount,
-                segment.athleteCount,
-                segment.hazardous,
-                segment.starCount
-            ]
-        await this.pg.query(
-            `
-                INSERT INTO segments(
-                    id, name, activity_type, distance, average_grade, maximum_grade,
-                    elevation_high, elevation_low,
-                    climb_category, city, state, country, private,
-                    athlete_pr_effort.pr_activity_id,
-                    athlete_pr_effort.pr_elapsed_time,
-                    athlete_pr_effort.pr_date,
-                    athlete_pr_effort.effort_count,
-                    athlete_segment_stats_id,
-                    created_at, updated_at, total_elevation_gain,
-                    map.id,
-                    map.polyline,
-                    map.summary_polyline,
-                    effort_count, athlete_count, hazardous, star_count,
-                    start_latlng,
-                    end_latlng
-                )
-                VALUES (
-                    ${getValuesList(values)},
-                    POINT($${values.length + 1}, $${values.length + 2}),
-                    POINT($${values.length + 3}, $${values.length + 4})
-                )
-            `,
-             [
-                 ...values,
-                 segment.startLatlng ? segment.startLatlng[0] : '',
-                 segment.startLatlng ? segment.startLatlng[1] : '',
-                 segment.endLatlng ? segment.endLatlng[0] : '',
-                 segment.endLatlng ? segment.endLatlng[1] : '',
-             ] as QueryConfig
-        )
+        await sql`
+            INSERT INTO segments(
+                id, name, activity_type, distance, average_grade, maximum_grade,
+                elevation_high, elevation_low,
+                climb_category, city, state, country, private,
+
+                athlete_pr_effort.pr_activity_id,
+                athlete_pr_effort.pr_elapsed_time,
+                athlete_pr_effort.pr_date,
+                athlete_pr_effort.effort_count,
+
+                athlete_segment_stats_id,
+                created_at, updated_at, total_elevation_gain,
+
+                map.id,
+                map.polyline,
+                map.summary_polyline,
+
+                effort_count, athlete_count, hazardous, star_count,
+                start_latlng,
+                end_latlng
+            )
+            VALUES (
+                ${segment.id ?? null},
+                ${segment.name ?? null},
+                ${segment.activityType ?? null},
+                ${segment.distance ?? null},
+                ${segment.averageGrade ?? null},
+                ${segment.maximumGrade ?? null},
+                ${segment.elevationHigh ?? null},
+                ${segment.elevationLow ?? null},
+                ${segment.climbCategory ?? null},
+                ${segment.city ?? null},
+                ${segment.state ?? null},
+                ${segment.country ?? null},
+                ${segment._private ?? null},
+
+                ${segment.athletePrEffort?.prActivityId ?? null},
+                ${segment.athletePrEffort?.prElapsedTime ?? null},
+                ${segment.athletePrEffort?.prDate ?? null},
+                ${segment.athletePrEffort?.effortCount ?? null},
+
+                ${segment.athleteSegmentStats?.id ?? null},
+                ${segment.createdAt ?? null},
+                ${segment.updatedAt ?? null},
+                ${segment.totalElevationGain ?? null},
+
+                ${segment.map?.id ?? null},
+                ${segment.map?.polyline ?? null},
+                ${segment.map?.summaryPolyline ?? null},
+
+                ${segment.effortCount ?? null},
+                ${segment.athleteCount ?? null},
+                ${segment.hazardous ?? null},
+                ${segment.starCount ?? null},
+
+                POINT(${segment.startLatlng?.at(0) ?? null}, ${segment.startLatlng?.at(1) ?? null}),
+                POINT(${segment.endLatlng?.at(0) ?? null}, ${segment.endLatlng?.at(1) ?? null})
+            )
+        `
     }
 
     async saveSegmentEffort(token: StravaToken, effort: DetailedSegmentEffort) {
@@ -177,216 +164,195 @@ export default class ActivityDataStore {
             const segment = keysToCamelCase((await segmentApi.getSegmentById(effort.segment.id)).data)
             this.saveSegment(segment)
         }
-        await this.pg.query(
-            `
-                INSERT INTO segment_efforts (
-                    id, activity_id, elapsed_time, start_date, start_date_local,
-                    distance, is_kom, name, activity.id, athlete.id, moving_time, start_index,
-                    end_index, average_cadence, average_watts, device_watts, average_heartrate,
-                    max_heartrate, segment_id, kom_rank, pr_rank, hidden
-                )
-                VALUES (
-                    $1, $2, $3, $4, $5,
-                    $6, $7, $8, $9, $10, $11, $12,
-                    $13, $14, $15, $16, $17,
-                    $18, $19, $20, $21, $22
-                )
-            `,
-            [
-                effort.id,
-                effort.activityId,
-                effort.elapsedTime,
-                effort.startDate,
-                effort.startDateLocal,
-                effort.distance,
-                effort.isKom,
-                effort.name,
-                effort.activity?.id,
-                effort.athlete?.id,
-                effort.movingTime,
-                effort.startIndex,
-                effort.endIndex,
-                effort.averageCadence,
-                effort.averageWatts,
-                effort.deviceWatts,
-                effort.averageHeartrate,
-                effort.maxHeartrate,
-                effort.segment?.id,
-                effort.komRank,
-                effort.prRank,
-                effort.hidden
-            ] as QueryConfig
-        )
+        await sql`
+            INSERT INTO segment_efforts (
+                id, activity_id, elapsed_time, start_date, start_date_local,
+                distance, is_kom, name, activity.id, athlete.id, moving_time, start_index,
+                end_index, average_cadence, average_watts, device_watts, average_heartrate,
+                max_heartrate, segment_id, kom_rank, pr_rank, hidden
+            )
+            VALUES (
+                ${effort.id ?? null},
+                ${effort.activityId ?? null},
+                ${effort.elapsedTime ?? null},
+                ${effort.startDate ?? null},
+                ${effort.startDateLocal ?? null},
+                ${effort.distance ?? null},
+                ${effort.isKom ?? null},
+                ${effort.name ?? null},
+                ${effort.activity?.id ?? null},
+                ${effort.athlete?.id ?? null},
+                ${effort.movingTime ?? null},
+                ${effort.startIndex ?? null},
+                ${effort.endIndex ?? null},
+                ${effort.averageCadence ?? null},
+                ${effort.averageWatts ?? null},
+                ${effort.deviceWatts ?? null},
+                ${effort.averageHeartrate ?? null},
+                ${effort.maxHeartrate ?? null},
+                ${effort.segment?.id ?? null},
+                ${effort.komRank ?? null},
+                ${effort.prRank ?? null},
+                ${effort.hidden ?? null}
+            )
+        `
     }
 
     async saveLap(lap: Lap) {
-        await this.pg.query(
-            `
-                INSERT INTO laps (
-                    id, activity.id, athlete.id, average_cadence, average_speed,
-                    distance, elapsed_time, start_index, end_index, lap_index,
-                    max_speed, moving_time, name, pace_zone, split, start_date,
-                    start_date_local,  total_elevation_gain
-                )
-                VALUES (
-                    $1, $2, $3, $4, $5,
-                    $6, $7, $8, $9, $10,
-                    $11, $12, $13, $14, $15, $16,
-                    $17, $18
-                )
-            `,
-            [
-                lap.id,
-                lap.activity?.id,
-                lap.athlete?.id,
-                lap.averageCadence,
-                lap.averageSpeed,
-                lap.distance,
-                lap.elapsedTime,
-                lap.startIndex,
-                lap.endIndex,
-                lap.lapIndex,
-                lap.maxSpeed,
-                lap.movingTime,
-                lap.name,
-                lap.paceZone,
-                lap.split,
-                lap.startDate,
-                lap.startDateLocal,
-                lap.totalElevationGain
-            ] as QueryConfig
-        )
+        await sql`
+            INSERT INTO laps (
+                id, activity.id, athlete.id, average_cadence, average_speed,
+                distance, elapsed_time, start_index, end_index, lap_index,
+                max_speed, moving_time, name, pace_zone, split, start_date,
+                start_date_local,  total_elevation_gain
+            )
+            VALUES (
+                ${lap.id ?? null},
+                ${lap.activity?.id ?? null},
+                ${lap.athlete?.id ?? null},
+                ${lap.averageCadence ?? null},
+                ${lap.averageSpeed ?? null},
+                ${lap.distance ?? null},
+                ${lap.elapsedTime ?? null},
+                ${lap.startIndex ?? null},
+                ${lap.endIndex ?? null},
+                ${lap.lapIndex ?? null},
+                ${lap.maxSpeed ?? null},
+                ${lap.movingTime ?? null},
+                ${lap.name ?? null},
+                ${lap.paceZone ?? null},
+                ${lap.split ?? null},
+                ${lap.startDate ?? null},
+                ${lap.startDateLocal ?? null},
+                ${lap.totalElevationGain ?? null}
+            )
+        `
     }
 
     async saveActivity(userId: number, activity: DetailedActivity, token: StravaToken) {
         activity = keysToCamelCase(activity)
-        const client = await this.pg.connect();
-        await client.query("BEGIN")
         try {
 
-        // Insert gear
-        if (activity.gearId && !(await this.hasGear(activity.gearId))) {
-            const gear = await this.retrieveGear(token, activity.gearId)
-            await this.saveGear(gear)
-        }
+            // Insert gear
+            if (activity.gearId && !(await this.hasGear(activity.gearId))) {
+                const gear = await this.retrieveGear(token, activity.gearId)
+                await this.saveGear(gear)
+            }
 
-        // Insert setment efforts
-        if (activity.segmentEfforts) {
-            activity.segmentEfforts.forEach(async (effort: DetailedSegmentEffort) => {
-                await this.saveSegmentEffort(token, effort)
-            })
-        }
+            // Insert setment efforts
+            if (activity.segmentEfforts) {
+                activity.segmentEfforts.forEach(async (effort: DetailedSegmentEffort) => {
+                    await this.saveSegmentEffort(token, effort)
+                })
+            }
 
-        // insert laps
-        if (activity.laps) {
-            activity.laps.forEach(async (lap: Lap) => {
-                await this.saveLap(lap)
-            })
-        }
-        // insert best efforts
-        if (activity.bestEfforts) {
-            activity.bestEfforts.forEach(async (effort: DetailedSegmentEffort) => {
-                await this.saveSegmentEffort(token, effort)
-            })
-        }
+            // insert laps
+            if (activity.laps) {
+                activity.laps.forEach(async (lap: Lap) => {
+                    await this.saveLap(lap)
+                })
+            }
+            // insert best efforts
+            if (activity.bestEfforts) {
+                activity.bestEfforts.forEach(async (effort: DetailedSegmentEffort) => {
+                    await this.saveSegmentEffort(token, effort)
+                })
+            }
 
-        const values = [
-                activity.id,
-                userId,
-                activity.externalId,
-                activity.uploadId,
-                activity.athlete?.id,
-                activity.name,
-                activity.distance,
-                activity.movingTime,
-                activity.elapsedTime,
-                activity.totalElevationGain,
-                activity.elevHigh,
-                activity.elevLow,
-                activity.type,
-                activity.sportType,
-                activity.startDate,
-                activity.startDateLocal,
-                activity.timezone,
-                activity.achievementCount,
-                activity.kudosCount,
-                activity.commentCount,
-                activity.athleteCount,
-                activity.photoCount,
-                activity.totalPhotoCount,
-                activity.map?.id,
-                activity.map?.polyline,
-                activity.map?.summaryPolyline,
-                activity.trainer,
-                activity.commute,
-                activity.manual,
-                activity._private,
-                activity.flagged,
-                activity.workoutType,
-                activity.uploadId,
-                activity.averageSpeed,
-                activity.maxSpeed,
-                activity.hasKudoed,
-                activity.hideFromHome,
-                activity.gear?.id,
-                activity.kilojoules,
-                activity.averageWatts,
-                activity.deviceWatts,
-                activity.maxWatts,
-                activity.weightedAverageWatts,
-                activity.description,
-                activity.photos?.count,
-                activity.photos?.primary?.id,
-                activity.photos?.primary?.source,
-                activity.photos?.primary?.uniqueId,
-                activity.photos?.primary?.urls,
-                activity.calories,
-                activity.deviceName,
-                activity.embedToken,
-        ]
-        await this.pg.query(
-            `
+            await sql`
                 INSERT INTO activities (
                     id, user_id, external_id, upload_id, athlete.id, name, distance,
                     moving_time, elapsed_time, total_elevation_gain, elev_high,
                     elev_low, type, sport_type, start_date, start_date_local,
-                    timezone,
-                    achievement_count,
+                    timezone, achievement_count,
                     kudos_count, comment_count, athlete_count, photo_count,
                     total_photo_count,
+
                     map.id,
                     map.polyline,
                     map.summary_polyline,
+
                     trainer, commute, manual, private,
                     flagged, workout_type, upload_id_str, average_speed, max_speed,
                     has_kudoed, hide_from_home, gear_id, kilojoules, average_watts,
                     device_watts, max_watts, weighted_average_watts, description,
+
                     photos.count,
                     photos.photo_primary.id,
                     photos.photo_primary.source,
                     photos.photo_primary.unique_id,
                     photos.photo_primary.urls,
+
                     calories, device_name, embed_token,
+
                     start_latlng,
                     end_latlng
-                ) VALUES (
-                    ${getValuesList(values)},
-                    POINT($${values.length + 1}, $${values.length + 2}),
-                    POINT($${values.length + 3}, $${values.length + 4})
                 )
-            `,
-            [
-                ...values,
-                activity.startLatlng ? activity.startLatlng[0] : '',
-                activity.startLatlng ? activity.startLatlng[1] : '',
-                activity.endLatlng ? activity.endLatlng[0] : '',
-                activity.endLatlng ? activity.endLatlng[1] : '',
-            ] as QueryConfig
-        )
-        await client.query("COMMIT")
-        } catch(err) {
+                VALUES (
+                    ${activity.id ?? null},
+                    ${userId ?? null},
+                    ${activity.externalId ?? null},
+                    ${activity.uploadId ?? null},
+                    ${activity.athlete?.id ?? null},
+                    ${activity.name ?? null},
+                    ${activity.distance ?? null},
+                    ${activity.movingTime ?? null},
+                    ${activity.elapsedTime ?? null},
+                    ${activity.totalElevationGain ?? null},
+                    ${activity.elevHigh ?? null},
+                    ${activity.elevLow ?? null},
+                    ${activity.type ?? null},
+                    ${activity.sportType ?? null},
+                    ${activity.startDate ?? null},
+                    ${activity.startDateLocal ?? null},
+                    ${activity.timezone ?? null},
+                    ${activity.achievementCount ?? null},
+                    ${activity.kudosCount ?? null},
+                    ${activity.commentCount ?? null},
+                    ${activity.athleteCount ?? null},
+                    ${activity.photoCount ?? null},
+                    ${activity.totalPhotoCount ?? null},
+
+                    ${activity.map?.id ?? null},
+                    ${activity.map?.polyline ?? null},
+                    ${activity.map?.summaryPolyline ?? null},
+
+                    ${activity.trainer ?? null},
+                    ${activity.commute ?? null},
+                    ${activity.manual ?? null},
+                    ${activity._private ?? null},
+                    ${activity.flagged ?? null},
+                    ${activity.workoutType ?? null},
+                    ${activity.uploadId ?? null},
+                    ${activity.averageSpeed ?? null},
+                    ${activity.maxSpeed ?? null},
+                    ${activity.hasKudoed ?? null},
+                    ${activity.hideFromHome ?? null},
+                    ${activity.gear?.id ?? null},
+                    ${activity.kilojoules ?? null},
+                    ${activity.averageWatts ?? null},
+                    ${activity.deviceWatts ?? null},
+                    ${activity.maxWatts ?? null},
+                    ${activity.weightedAverageWatts ?? null},
+                    ${activity.description ?? null},
+
+                    ${activity.photos?.count ?? null},
+                    ${activity.photos?.primary?.id ?? null},
+                    ${activity.photos?.primary?.source ?? null},
+                    ${activity.photos?.primary?.uniqueId ?? null},
+                    ${JSON.stringify(activity.photos?.primary?.urls)},
+
+                    ${activity.calories ?? null},
+                    ${activity.deviceName ?? null},
+                    ${activity.embedToken ?? null},
+
+                    POINT(${activity.startLatlng?.at(0) ?? null}, ${activity.startLatlng?.at(1) ?? null}),
+                    POINT(${activity.endLatlng?.at(0) ?? null}, ${activity.endLatlng?.at(1) ?? null})
+                )
+
+            `
+        } catch (err) {
             console.log(err)
-            await client.query("ROLLBACK")
         }
     }
 }
