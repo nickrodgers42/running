@@ -18,9 +18,7 @@ export default class AthleteDataStore {
             `
             SELECT EXISTS (SELECT user_id FROM athletes WHERE user_id = $1)
         `,
-            [
-                userId.toString()
-            ]
+            [userId.toString()],
         )
 
         console.log(response)
@@ -65,15 +63,19 @@ export default class AthleteDataStore {
                 athlete.friendCount,
                 athlete.measurementPreference,
                 athlete.ftp,
-                athlete.weight
-            ] as QueryConfigValues<(number & string & Date)[]>
+                athlete.weight,
+            ] as QueryConfigValues<(number & string & Date)[]>,
         )
     }
 
     async retrieveAthlete(token: StravaToken): Promise<DetailedAthlete> {
-        const athletesApi = new AthletesApi({
-            accessToken: token.getAccessToken()
-        }, undefined, this.axiosClient)
+        const athletesApi = new AthletesApi(
+            {
+                accessToken: token.getAccessToken(),
+            },
+            undefined,
+            this.axiosClient,
+        )
         return (await athletesApi.getLoggedInAthlete()).data
     }
 
@@ -88,7 +90,7 @@ export default class AthleteDataStore {
                 FROM athletes WHERE id = $1
                 LIMIT 1
             `,
-            [athlete_id]
+            [athlete_id],
         )
         if (response.rowCount != 1 || response.rows[0] == undefined) {
             throw Error("Athlete not found")
@@ -97,28 +99,27 @@ export default class AthleteDataStore {
         const athleteData = response.rows[0]
 
         return {
-            id: athleteData['id'],
-            user_id: athleteData['user_id'],
-            resource_state: athleteData['resource_state'],
-            firstname: athleteData['firstname'],
-            lastname: athleteData['lastname'],
-            profile_medium: athleteData['profile_medium'],
-            profile: athleteData['profile'],
-            city: athleteData['city'],
-            state: athleteData['state'],
-            country: athleteData['country'],
-            sex: athleteData['sex'],
-            premium: Boolean(athleteData['premium']),
-            summit: Boolean(athleteData['summit']),
-            created_at: new Date(athleteData['created_at']),
-            updated_at: new Date(athleteData['updated_at']),
-            follower_count: Number(athleteData['follower_count']),
-            friend_count: Number(athleteData['friend_count']),
-            measurement_preference: athleteData['measurement_preference'],
-            ftp: Number(athleteData['ftp']),
-            weight: Number(athleteData['weight'])
+            id: athleteData["id"],
+            user_id: athleteData["user_id"],
+            resource_state: athleteData["resource_state"],
+            firstname: athleteData["firstname"],
+            lastname: athleteData["lastname"],
+            profile_medium: athleteData["profile_medium"],
+            profile: athleteData["profile"],
+            city: athleteData["city"],
+            state: athleteData["state"],
+            country: athleteData["country"],
+            sex: athleteData["sex"],
+            premium: Boolean(athleteData["premium"]),
+            summit: Boolean(athleteData["summit"]),
+            created_at: new Date(athleteData["created_at"]),
+            updated_at: new Date(athleteData["updated_at"]),
+            follower_count: Number(athleteData["follower_count"]),
+            friend_count: Number(athleteData["friend_count"]),
+            measurement_preference: athleteData["measurement_preference"],
+            ftp: Number(athleteData["ftp"]),
+            weight: Number(athleteData["weight"]),
         }
-
     }
 
     async getAthlete(userId: number, token: StravaToken): Promise<Athlete> {
@@ -137,9 +138,7 @@ export default class AthleteDataStore {
                 FROM athletes WHERE user_id = $1
                 LIMIT 1
             `,
-            [
-                userId
-            ] as QueryConfigValues<(number)[]>
+            [userId] as QueryConfigValues<number[]>,
         )
 
         console.log(response)
@@ -150,26 +149,26 @@ export default class AthleteDataStore {
         const athleteData = response.rows[0]
 
         return {
-            id: athleteData['id'],
-            user_id: athleteData['user_id'],
-            resource_state: athleteData['resource_state'],
-            firstname: athleteData['firstname'],
-            lastname: athleteData['lastname'],
-            profile_medium: athleteData['profile_medium'],
-            profile: athleteData['profile'],
-            city: athleteData['city'],
-            state: athleteData['state'],
-            country: athleteData['country'],
-            sex: athleteData['sex'],
-            premium: Boolean(athleteData['premium']),
-            summit: Boolean(athleteData['summit']),
-            created_at: new Date(athleteData['created_at']),
-            updated_at: new Date(athleteData['updated_at']),
-            follower_count: Number(athleteData['follower_count']),
-            friend_count: Number(athleteData['friend_count']),
-            measurement_preference: athleteData['measurement_preference'],
-            ftp: Number(athleteData['ftp']),
-            weight: Number(athleteData['weight'])
+            id: athleteData["id"],
+            user_id: athleteData["user_id"],
+            resource_state: athleteData["resource_state"],
+            firstname: athleteData["firstname"],
+            lastname: athleteData["lastname"],
+            profile_medium: athleteData["profile_medium"],
+            profile: athleteData["profile"],
+            city: athleteData["city"],
+            state: athleteData["state"],
+            country: athleteData["country"],
+            sex: athleteData["sex"],
+            premium: Boolean(athleteData["premium"]),
+            summit: Boolean(athleteData["summit"]),
+            created_at: new Date(athleteData["created_at"]),
+            updated_at: new Date(athleteData["updated_at"]),
+            follower_count: Number(athleteData["follower_count"]),
+            friend_count: Number(athleteData["friend_count"]),
+            measurement_preference: athleteData["measurement_preference"],
+            ftp: Number(athleteData["ftp"]),
+            weight: Number(athleteData["weight"]),
         }
     }
 }

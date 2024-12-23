@@ -35,7 +35,9 @@ export class ExchangeToken
             const stravaToken: StravaToken = await StravaToken.fetchToken(
                 input.code,
             )
-            const userId: number = await this.userDataStore.getUserId(input.username)
+            const userId: number = await this.userDataStore.getUserId(
+                input.username,
+            )
             await this.tokenDataStore.saveStravaToken(userId, stravaToken)
         } catch (err) {
             log.error(err)

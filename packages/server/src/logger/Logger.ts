@@ -6,7 +6,11 @@ export default class Logger {
         options?: pino.LoggerOptions<CustomLevels>,
     ): pino.Logger<CustomLevels> {
         return pino({
-            level: getOrElse(process.env, EnvironmentVariables.LOG_LEVEL, 'info'),
+            level: getOrElse(
+                process.env,
+                EnvironmentVariables.LOG_LEVEL,
+                "info",
+            ),
             ...options,
         })
     }

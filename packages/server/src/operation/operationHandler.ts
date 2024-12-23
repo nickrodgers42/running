@@ -1,4 +1,4 @@
-import { Operation } from "@aws-smithy/server-common";
+import { Operation } from "@aws-smithy/server-common"
 
 export interface OperationContext {}
 

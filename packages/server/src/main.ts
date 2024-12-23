@@ -1,4 +1,7 @@
-import { getRunningServiceHandler, RunningServiceOperations } from "@running/server"
+import {
+    getRunningServiceHandler,
+    RunningServiceOperations,
+} from "@running/server"
 import SmithyServer from "./server/server"
 import { SERVER_PORT } from "./constants"
 import { Pool } from "pg"
@@ -37,28 +40,36 @@ const athleteDataStore = new AthleteDataStore(
 )
 
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type OperationMap = { [key in RunningServiceOperations]: OperationHandler<any, any, any> }
+type OperationMap = {
+    [key in RunningServiceOperations]: OperationHandler<any, any, any>
+}
 const operations: OperationMap = {
     Ping: new Ping(),
     ExchangeToken: new ExchangeToken(userDataStore, tokenDataStore),
     Authenticate: new Authenticate(),
     IsAuthenticated: new IsAuthenticated(userDataStore, tokenDataStore),
     GetAthlete: new GetAthlete(athleteDataStore),
-    GetAthleteFromUsername: new GetAthleteFromUsername(userDataStore, tokenDataStore, athleteDataStore),
+    GetAthleteFromUsername: new GetAthleteFromUsername(
+        userDataStore,
+        tokenDataStore,
+        athleteDataStore,
+    ),
     GetActivity: new GetActivity(),
     ListActivities: new ListActivities(),
     SyncActivities: new SyncActivities(),
 }
 
-
 /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
-type HandlerMap = { [key in RunningServiceOperations]: Operation<any, any, any> }
+type HandlerMap = {
+    [key in RunningServiceOperations]: Operation<any, any, any>
+}
 function bindHandlers(): HandlerMap {
     const serviceHandlers: Partial<HandlerMap> = {}
     Object.keys(operations).forEach((key) => {
         const operationKey = key as RunningServiceOperations
         const operationHandler = operations[operationKey]
-        serviceHandlers[operationKey] = operationHandler.handle.bind(operationHandler)
+        serviceHandlers[operationKey] =
+            operationHandler.handle.bind(operationHandler)
     })
     return serviceHandlers as HandlerMap
 }

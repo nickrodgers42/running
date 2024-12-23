@@ -1,20 +1,30 @@
-import { GetAthleteFromUsernameInput, GetAthleteFromUsernameOutput } from "@running/server";
-import { OperationContext, OperationHandler } from "./operationHandler";
-import AthleteDataStore from "../datastore/AthleteDataStore";
-import TokenDataStore from "../datastore/TokenDataStore";
-import UserDataStore from "../datastore/UserDataStore";
-import StravaToken from "../token/stravaToken";
-
-export class GetAthleteFromUsername implements OperationHandler<
+import {
     GetAthleteFromUsernameInput,
     GetAthleteFromUsernameOutput,
-    OperationContext
-> {
+} from "@running/server"
+import { OperationContext, OperationHandler } from "./operationHandler"
+import AthleteDataStore from "../datastore/AthleteDataStore"
+import TokenDataStore from "../datastore/TokenDataStore"
+import UserDataStore from "../datastore/UserDataStore"
+import StravaToken from "../token/stravaToken"
+
+export class GetAthleteFromUsername
+    implements
+        OperationHandler<
+            GetAthleteFromUsernameInput,
+            GetAthleteFromUsernameOutput,
+            OperationContext
+        >
+{
     private userDataStore: UserDataStore
     private tokenDataaStore: TokenDataStore
     private athleteDataStore: AthleteDataStore
 
-    constructor(userDataStore: UserDataStore, tokenDataaStore: TokenDataStore, athleteDataStore: AthleteDataStore) {
+    constructor(
+        userDataStore: UserDataStore,
+        tokenDataaStore: TokenDataStore,
+        athleteDataStore: AthleteDataStore,
+    ) {
         this.userDataStore = userDataStore
         this.tokenDataaStore = tokenDataaStore
         this.athleteDataStore = athleteDataStore
@@ -22,7 +32,7 @@ export class GetAthleteFromUsername implements OperationHandler<
 
     async handle(
         input: GetAthleteFromUsernameInput,
-        _context: OperationContext
+        _context: OperationContext,
     ): Promise<GetAthleteFromUsernameOutput> {
         if (!input.username) {
             throw Error("Username not found")
@@ -35,7 +45,7 @@ export class GetAthleteFromUsername implements OperationHandler<
         }
 
         return {
-            athlete: await this.athleteDataStore.getAthlete(userId, token)
+            athlete: await this.athleteDataStore.getAthlete(userId, token),
         }
     }
 }

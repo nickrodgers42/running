@@ -1,38 +1,48 @@
 import { AxiosInstance } from "axios"
-import { DetailedActivity, DetailedGear, DetailedSegment, DetailedSegmentEffort, GearsApi, Lap, SegmentsApi } from "strava"
+import {
+    DetailedActivity,
+    DetailedGear,
+    DetailedSegment,
+    DetailedSegmentEffort,
+    GearsApi,
+    Lap,
+    SegmentsApi,
+} from "strava"
 import StravaToken from "../token/stravaToken"
 import { Pool, QueryConfigValues } from "pg"
 import sql from "./database"
 
-type QueryConfig =  QueryConfigValues<(number & string & Date)[]>
+type QueryConfig = QueryConfigValues<(number & string & Date)[]>
 
 function getValuesList(params: unknown[]): string {
-    return params.map((_value: unknown, index) => {
-        return `$${index + 1}`
-    }).join(', ')
+    return params
+        .map((_value: unknown, index) => {
+            return `$${index + 1}`
+        })
+        .join(", ")
 }
 
 function toCamelCase(str: string): string {
-  return str.replace(/_([a-z])/g, (g) => g[1].toUpperCase());
+    return str.replace(/_([a-z])/g, (g) => g[1].toUpperCase())
 }
 
 /* eslint-disable-next-line */
 function keysToCamelCase(obj: any): any {
-  if (Array.isArray(obj)) {
-    return obj.map(keysToCamelCase);
-  } else if (typeof obj === "object" && obj !== null) {
-/* eslint-disable-next-line */
-    const newObj: any = {};
-    for (const key in obj) {
-      if (Object.prototype.hasOwnProperty.call(obj, key)) {
-        const camelCaseKey = toCamelCase(key);
-        newObj[camelCaseKey] = keysToCamelCase(obj[key]);
-      }
+    if (Array.isArray(obj)) {
+        return obj.map(keysToCamelCase)
+    } else if (typeof obj === "object" && obj !== null) {
+        /* eslint-disable-next-line */
+        const newObj: any = {}
+        for (const key in obj) {
+            if (Object.prototype.hasOwnProperty.call(obj, key)) {
+                const camelCaseKey = toCamelCase(key)
+                newObj[camelCaseKey] = keysToCamelCase(obj[key])
+            }
+        }
+        return newObj
+    } else {
+        return obj
     }
-    return newObj;
-  } else {
-    return obj;
-  }
 }
 
 export default class ActivityDataStore {
@@ -52,7 +62,7 @@ export default class ActivityDataStore {
                 model_name, frame_type, description
             )
             VALUES (
-                ${gear.id ?? null },
+                ${gear.id ?? null},
                 ${gear.resourceState ?? null},
                 ${gear.primary ?? null},
                 ${gear.name ?? null},
@@ -75,10 +85,17 @@ export default class ActivityDataStore {
         return false
     }
 
-    async retrieveGear(token: StravaToken, gearId: string): Promise<DetailedGear> {
-        const gearApi = new GearsApi({
-            accessToken: token.getAccessToken()
-        }, undefined, this.axiosClient)
+    async retrieveGear(
+        token: StravaToken,
+        gearId: string,
+    ): Promise<DetailedGear> {
+        const gearApi = new GearsApi(
+            {
+                accessToken: token.getAccessToken(),
+            },
+            undefined,
+            this.axiosClient,
+        )
 
         return keysToCamelCase((await gearApi.getGearById(gearId)).data)
     }
@@ -157,11 +174,20 @@ export default class ActivityDataStore {
     }
 
     async saveSegmentEffort(token: StravaToken, effort: DetailedSegmentEffort) {
-        if (effort.segment?.id != undefined && !(await this.segmentExists(effort.segment.id))) {
-            const segmentApi = new SegmentsApi({
-                accessToken: token.getAccessToken()
-            }, undefined, this.axiosClient)
-            const segment = keysToCamelCase((await segmentApi.getSegmentById(effort.segment.id)).data)
+        if (
+            effort.segment?.id != undefined &&
+            !(await this.segmentExists(effort.segment.id))
+        ) {
+            const segmentApi = new SegmentsApi(
+                {
+                    accessToken: token.getAccessToken(),
+                },
+                undefined,
+                this.axiosClient,
+            )
+            const segment = keysToCamelCase(
+                (await segmentApi.getSegmentById(effort.segment.id)).data,
+            )
             this.saveSegment(segment)
         }
         await sql`
@@ -229,10 +255,13 @@ export default class ActivityDataStore {
         `
     }
 
-    async saveActivity(userId: number, activity: DetailedActivity, token: StravaToken) {
+    async saveActivity(
+        userId: number,
+        activity: DetailedActivity,
+        token: StravaToken,
+    ) {
         activity = keysToCamelCase(activity)
         try {
-
             // Insert gear
             if (activity.gearId && !(await this.hasGear(activity.gearId))) {
                 const gear = await this.retrieveGear(token, activity.gearId)
@@ -241,9 +270,11 @@ export default class ActivityDataStore {
 
             // Insert setment efforts
             if (activity.segmentEfforts) {
-                activity.segmentEfforts.forEach(async (effort: DetailedSegmentEffort) => {
-                    await this.saveSegmentEffort(token, effort)
-                })
+                activity.segmentEfforts.forEach(
+                    async (effort: DetailedSegmentEffort) => {
+                        await this.saveSegmentEffort(token, effort)
+                    },
+                )
             }
 
             // insert laps
@@ -254,9 +285,11 @@ export default class ActivityDataStore {
             }
             // insert best efforts
             if (activity.bestEfforts) {
-                activity.bestEfforts.forEach(async (effort: DetailedSegmentEffort) => {
-                    await this.saveSegmentEffort(token, effort)
-                })
+                activity.bestEfforts.forEach(
+                    async (effort: DetailedSegmentEffort) => {
+                        await this.saveSegmentEffort(token, effort)
+                    },
+                )
             }
 
             await sql`

@@ -1,25 +1,28 @@
-import { AuthenticationInput, AuthenticationOutput } from "@running/server";
-import { OperationContext, OperationHandler } from "./operationHandler";
-import { CLIENT_ID, SERVER_PORT } from "../constants";
+import { AuthenticationInput, AuthenticationOutput } from "@running/server"
+import { OperationContext, OperationHandler } from "./operationHandler"
+import { CLIENT_ID, SERVER_PORT } from "../constants"
 
 enum StravaScope {
-    READ = 'read',
-    READ_ALL = 'read_all',
-    PROFILE_READ_ALL = 'profile:read_all',
-    PROFILE_WRITE = 'profile:write',
-    ACTIVITY_READ = 'activity:read',
-    ACTIVITY_READ_ALL = 'activity:read_all',
-    ACTIVITY_WRITE = 'activity:write',
+    READ = "read",
+    READ_ALL = "read_all",
+    PROFILE_READ_ALL = "profile:read_all",
+    PROFILE_WRITE = "profile:write",
+    ACTIVITY_READ = "activity:read",
+    ACTIVITY_READ_ALL = "activity:read_all",
+    ACTIVITY_WRITE = "activity:write",
 }
 
-export class Authenticate implements OperationHandler<
-    AuthenticationInput,
-    AuthenticationOutput,
-    OperationContext
-> {
+export class Authenticate
+    implements
+        OperationHandler<
+            AuthenticationInput,
+            AuthenticationOutput,
+            OperationContext
+        >
+{
     async handle(
         input: AuthenticationInput,
-        _context: OperationContext
+        _context: OperationContext,
     ): Promise<AuthenticationOutput> {
         const authUrl = new URL("https://www.strava.com/oauth/authorize")
 
@@ -38,8 +41,8 @@ export class Authenticate implements OperationHandler<
             scope: [
                 StravaScope.READ_ALL,
                 StravaScope.PROFILE_READ_ALL,
-                StravaScope.ACTIVITY_READ_ALL
-            ].join(',')
+                StravaScope.ACTIVITY_READ_ALL,
+            ].join(","),
         }
 
         const search = Object.entries(searchParams)

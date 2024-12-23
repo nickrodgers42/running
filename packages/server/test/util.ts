@@ -1,5 +1,5 @@
-import { existsSync, lstatSync, readFileSync } from "fs";
-import { resolve } from "path";
+import { existsSync, lstatSync, readFileSync } from "fs"
+import { resolve } from "path"
 
 class FileNotFoundError extends Error {}
 

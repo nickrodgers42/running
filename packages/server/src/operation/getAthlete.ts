@@ -1,8 +1,11 @@
-import { GetAthleteInput, GetAthleteOutput } from "@running/server";
-import { OperationContext, OperationHandler } from "./operationHandler";
-import AthleteDataStore from "../datastore/AthleteDataStore";
+import { GetAthleteInput, GetAthleteOutput } from "@running/server"
+import { OperationContext, OperationHandler } from "./operationHandler"
+import AthleteDataStore from "../datastore/AthleteDataStore"
 
-export class GetAthlete implements OperationHandler<GetAthleteInput, GetAthleteOutput, OperationContext> {
+export class GetAthlete
+    implements
+        OperationHandler<GetAthleteInput, GetAthleteOutput, OperationContext>
+{
     private athleteDataStore: AthleteDataStore
 
     constructor(athleteDataStore: AthleteDataStore) {
@@ -11,10 +14,12 @@ export class GetAthlete implements OperationHandler<GetAthleteInput, GetAthleteO
 
     async handle(
         input: GetAthleteInput,
-        _context: OperationContext
+        _context: OperationContext,
     ): Promise<GetAthleteOutput> {
         return {
-            athlete: await this.athleteDataStore.getAthleteFromId(Number(input.id))
+            athlete: await this.athleteDataStore.getAthleteFromId(
+                Number(input.id),
+            ),
         }
     }
 }

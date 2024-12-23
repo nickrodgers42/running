@@ -17,7 +17,10 @@ export default class TokenDataStore {
             await this.loadStravaToken(userId)
             return true
         } catch (err) {
-            if (err instanceof DataStoreError && (err as DataStoreError).message.includes("not found")) {
+            if (
+                err instanceof DataStoreError &&
+                (err as DataStoreError).message.includes("not found")
+            ) {
                 return false
             }
             throw err
@@ -43,7 +46,7 @@ export default class TokenDataStore {
                     token.getRefreshToken(),
                     token.getExpiresAt(),
                     token.getTokenType(),
-                ] as QueryConfigValues<(number & string & Date)[]>
+                ] as QueryConfigValues<(number & string & Date)[]>,
             )
         } catch (error) {
             log.error(error)

@@ -61,7 +61,7 @@ export default class SmithyServer {
             )
             httpResponse.headers = {
                 ...httpResponse.headers,
-                ...this.corsHeaders
+                ...this.corsHeaders,
             }
 
             log.info(httpResponse, "Response")

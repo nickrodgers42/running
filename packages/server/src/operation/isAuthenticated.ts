@@ -1,13 +1,16 @@
-import { IsAuthenticatedInput, IsAuthenticatedOutput } from "@running/server";
-import { OperationContext, OperationHandler } from "./operationHandler";
-import TokenDataStore from "../datastore/TokenDataStore";
-import UserDataStore from "../datastore/UserDataStore";
+import { IsAuthenticatedInput, IsAuthenticatedOutput } from "@running/server"
+import { OperationContext, OperationHandler } from "./operationHandler"
+import TokenDataStore from "../datastore/TokenDataStore"
+import UserDataStore from "../datastore/UserDataStore"
 
-export class IsAuthenticated implements OperationHandler<
-    IsAuthenticatedInput,
-    IsAuthenticatedOutput,
-    OperationContext
-> {
+export class IsAuthenticated
+    implements
+        OperationHandler<
+            IsAuthenticatedInput,
+            IsAuthenticatedOutput,
+            OperationContext
+        >
+{
     private userDataStore: UserDataStore
     private tokenDataStore: TokenDataStore
 
@@ -18,7 +21,7 @@ export class IsAuthenticated implements OperationHandler<
 
     async handle(
         input: IsAuthenticatedInput,
-        _context: OperationContext
+        _context: OperationContext,
     ): Promise<IsAuthenticatedOutput> {
         if (input.username == undefined) {
             throw Error("No username found")
@@ -29,7 +32,7 @@ export class IsAuthenticated implements OperationHandler<
         const hasToken = await this.tokenDataStore.hasToken(userId)
 
         return {
-            isAuthenticated: hasToken
+            isAuthenticated: hasToken,
         }
     }
 }

@@ -1,5 +1,5 @@
-import postgres from 'postgres'
-import { getOrThrow, EnvironmentVariables } from '../environmentVariables'
+import postgres from "postgres"
+import { getOrThrow, EnvironmentVariables } from "../environmentVariables"
 
 const sql = postgres({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
