@@ -20,7 +20,7 @@ CREATE TABLE athletes (
     friend_count INT,
     measurement_preference TEXT,
     ftp INT,
-    weight NUMERIC
+    weight REAL
 );
 
 COMMIT;
