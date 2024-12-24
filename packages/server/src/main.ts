@@ -24,6 +24,7 @@ import {
     SyncActivities,
 } from "./operation"
 import { Operation } from "@aws-smithy/server-common"
+import ActivityDataStore from "./datastore/ActivityDataStore"
 
 const pg = new Pool({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
@@ -32,15 +33,17 @@ const pg = new Pool({
     port: Number(getOrThrow(process.env, EnvironmentVariables.POSTGRES_PORT)),
 })
 
+const axiosClient = applyCaseMiddleware(axios.create())
 const userDataStore = new UserDataStore(pg)
 const tokenDataStore = new TokenDataStore(pg)
 const athleteDataStore = new AthleteDataStore(
     pg,
-    applyCaseMiddleware(axios.create()),
+    axiosClient
 )
+const activityDataStore = new ActivityDataStore(undefined, axiosClient)
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type OperationMap = {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key in RunningServiceOperations]: OperationHandler<any, any, any>
 }
 const operations: OperationMap = {
@@ -54,13 +57,13 @@ const operations: OperationMap = {
         tokenDataStore,
         athleteDataStore,
     ),
-    GetActivity: new GetActivity(),
-    ListActivities: new ListActivities(),
-    SyncActivities: new SyncActivities(),
+    GetActivity: new GetActivity(activityDataStore, tokenDataStore),
+    ListActivities: new ListActivities(activityDataStore),
+    SyncActivities: new SyncActivities(tokenDataStore, activityDataStore),
 }
 
-/* eslint-disable-next-line @typescript-eslint/no-explicit-any */
 type HandlerMap = {
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key in RunningServiceOperations]: Operation<any, any, any>
 }
 function bindHandlers(): HandlerMap {
