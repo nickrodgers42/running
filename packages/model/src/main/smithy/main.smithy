@@ -8,16 +8,19 @@ use aws.api#service
 @service(sdkId: "Running")
 @restJson1
 @cors({})
-
+@httpBasicAuth
+@auth([httpBasicAuth])
 service Running {
     version: "2023-08-13"
     operations: [
+        Login
         Ping
     ]
     resources: [
         Authentication
         Athletes
         Activities
+        User
     ]
 }
 
@@ -37,3 +40,8 @@ structure PingOutput {
     message: String
 }
 
+@error("client")
+@httpError(401)
+structure AuthorizationError {
+    message: String
+}

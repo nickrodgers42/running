@@ -8,6 +8,7 @@ export class Ping
         _input: PingInput,
         _context: OperationContext,
     ): Promise<PingOutput> {
+        console.log("context", _context)
         return {
             message: "Pong",
         }

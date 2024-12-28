@@ -18,7 +18,7 @@ resource Authentication {
 operation IsAuthenticated {
     input: IsAuthenticatedInput
     output: IsAuthenticatedOutput
-    errors: [ AuthenticationError, ValidationException ]
+    errors: [ AuthorizationError, AuthenticationError, ValidationException ]
 }
 
 structure IsAuthenticatedInput {
@@ -37,7 +37,7 @@ structure IsAuthenticatedOutput {
 operation Authenticate {
     input: AuthenticationInput
     output: AuthenticationOutput
-    errors: [ AuthenticationError, ValidationException ]
+    errors: [ AuthorizationError, AuthenticationError, ValidationException ]
 }
 
 structure AuthenticationInput {
@@ -64,7 +64,7 @@ structure AuthenticationError {
 operation ExchangeToken {
     input: ExchangeTokenInput
     output: ExchangeTokenOutput
-    errors: [ ValidationException ]
+    errors: [ AuthorizationError, ValidationException ]
 }
 
 structure ExchangeTokenInput {

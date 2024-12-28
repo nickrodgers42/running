@@ -57,7 +57,9 @@ export default class SmithyServer {
 
             const httpResponse: HttpResponse = await this.serviceHandler.handle(
                 httpRequest,
-                {},
+                {
+                    headers: req.headers
+                },
             )
             httpResponse.headers = {
                 ...httpResponse.headers,

@@ -25,6 +25,8 @@ import {
 } from "./operation"
 import { Operation } from "@aws-smithy/server-common"
 import ActivityDataStore from "./datastore/ActivityDataStore"
+import { Login } from "./operation/login"
+import { SignUp } from "./operation/signup"
 
 const pg = new Pool({
     user: getOrThrow(process.env, EnvironmentVariables.POSTGRES_USER),
@@ -46,6 +48,7 @@ type OperationMap = {
     /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     [key in RunningServiceOperations]: OperationHandler<any, any, any>
 }
+
 const operations: OperationMap = {
     Ping: new Ping(),
     ExchangeToken: new ExchangeToken(userDataStore, tokenDataStore),
@@ -60,6 +63,8 @@ const operations: OperationMap = {
     GetActivity: new GetActivity(activityDataStore, tokenDataStore),
     ListActivities: new ListActivities(activityDataStore),
     SyncActivities: new SyncActivities(tokenDataStore, activityDataStore),
+    Login: new Login(userDataStore),
+    SignUp: new SignUp(userDataStore)
 }
 
 type HandlerMap = {
